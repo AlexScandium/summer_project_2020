@@ -44,15 +44,19 @@ namespace Com.WWZR.WorldWarZRoyal {
         {
             float horizontalAxisValue = Input.GetAxis(HORIZONTAL_AXIS);
             float verticalAxisValue = Input.GetAxis(VERTICAL_AXIS);
+            Vector3 direction = new Vector3();
+
 
             if (horizontalAxisValue != 0)
             {
-                transform.position += new Vector3(0,0, horizontalAxisValue * speed * Time.deltaTime);
+                direction.z= horizontalAxisValue * speed * Time.deltaTime;
             }
             if (verticalAxisValue != 0)
             {
-                transform.position += new Vector3(-verticalAxisValue * speed * Time.deltaTime, 0,0 );
+                direction.x = -verticalAxisValue * speed * Time.deltaTime;
             }
+
+            if (direction != Vector3.zero) transform.position += direction;
         }
 
         private void Update()
