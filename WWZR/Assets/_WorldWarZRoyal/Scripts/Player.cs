@@ -11,13 +11,32 @@ namespace Com.WWZR.WorldWarZRoyal {
 	{
         private const string HORIZONTAL_AXIS = "Horizontal";
         private const string VERTICAL_AXIS = "Vertical";
-        private const string SPRINT_BUTTON = "Fire1";
+
+        private bool Left
+        {
+            get { return Input.GetKey(KeyCode.Q); }
+        }
+
+        private bool Right
+        {
+            get { return Input.GetKey(KeyCode.D); }
+        }
+
+        private bool Forward
+        {
+            get { return Input.GetKey(KeyCode.Z); }
+        }
+
+        private bool Back
+        {
+            get { return Input.GetKey(KeyCode.S); }
+        }
+
+        private Action DoAction;
+
+        private Camera mainCamera = null;
 
         [SerializeField] private float speed = 5f;
-        [SerializeField] private float maxSpeed = 7.5f;
-        private float startSpeed;
-        
-        [SerializeField] private float acceleration = 0.5f;
 
         private void Start()
         {
@@ -26,12 +45,9 @@ namespace Com.WWZR.WorldWarZRoyal {
 
         private void Init()
         {
-            startSpeed = speed;
+            mainCamera = Camera.main;
             SetModeMove();
         }
-
-        private Action DoAction;
-        
 
         private void SetModeWait()
         {
@@ -52,29 +68,45 @@ namespace Com.WWZR.WorldWarZRoyal {
         {
             float horizontalAxisValue = Input.GetAxis(HORIZONTAL_AXIS);
             float verticalAxisValue = Input.GetAxis(VERTICAL_AXIS);
-            Vector3 direction = new Vector3();
 
-            if (Input.GetButton(SPRINT_BUTTON))
+            Vector3 camF = mainCamera.transform.forward;
+            Vector3 camR = mainCamera.transform.right;
+            camF.y = 0;
+            camR.y = 0;
+
+            if (!Left && !Right && !Forward && !Back) return;
+
+            if (verticalAxisValue > 0)
             {
-                Debug.Log("on sprint");
-                speed += acceleration * Time.deltaTime;
-                speed = Mathf.Clamp(speed, startSpeed, maxSpeed);
+                Debug.Log("Up");
+                transform.LookAt(transform.position + camF);
+                Debug.Log(transform.rotation);
+                Debug.Log(transform.position + camF);
             }
-            else
+            else if (verticalAxisValue < 0 )
             {
-                speed = startSpeed;
+                Debug.Log("Down");
+                transform.LookAt(transform.position - camF);
+                Debug.Log(transform.rotation);
+                Debug.Log(transform.position - camF);
             }
 
-            if (horizontalAxisValue != 0)
+            if (horizontalAxisValue > 0)
             {
-                direction.z= horizontalAxisValue * speed * Time.deltaTime;
+                Debug.Log("Right");
+                transform.LookAt(transform.position + camR);
+                Debug.Log(transform.rotation);
+                Debug.Log(transform.position + camR);
             }
-            if (verticalAxisValue != 0)
+            else if(horizontalAxisValue < 0)
             {
-                direction.x = -verticalAxisValue * speed * Time.deltaTime;
+                Debug.Log("Left");
+                transform.LookAt(transform.position - camR);
+                Debug.Log(transform.rotation);
+                Debug.Log(transform.position - camR);
             }
 
-            if (direction != Vector3.zero) transform.position += direction;
+            transform.position += transform.forward * Time.deltaTime * speed;
         }
 
         private void Update()
