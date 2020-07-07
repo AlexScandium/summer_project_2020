@@ -81,7 +81,7 @@ namespace Com.WWZR.WorldWarZRoyal {
                 Debug.Log("Up");
                 transform.LookAt(transform.position + camF);
             }
-            else if (verticalAxisValue < 0 )
+            if (verticalAxisValue < 0 )
             {
                 Debug.Log("Down");
                 transform.LookAt(transform.position - camF);
@@ -92,7 +92,7 @@ namespace Com.WWZR.WorldWarZRoyal {
                 Debug.Log("Right");
                 transform.LookAt(transform.position + camR);
             }
-            else if(horizontalAxisValue < 0)
+            if(horizontalAxisValue < 0)
             {
                 Debug.Log("Left");
                 transform.LookAt(transform.position - camR);
