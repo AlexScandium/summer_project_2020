@@ -80,30 +80,22 @@ namespace Com.WWZR.WorldWarZRoyal {
             {
                 Debug.Log("Up");
                 transform.LookAt(transform.position + camF);
-                Debug.Log(transform.rotation);
-                Debug.Log(transform.position + camF);
             }
             else if (verticalAxisValue < 0 )
             {
                 Debug.Log("Down");
                 transform.LookAt(transform.position - camF);
-                Debug.Log(transform.rotation);
-                Debug.Log(transform.position - camF);
             }
 
             if (horizontalAxisValue > 0)
             {
                 Debug.Log("Right");
                 transform.LookAt(transform.position + camR);
-                Debug.Log(transform.rotation);
-                Debug.Log(transform.position + camR);
             }
             else if(horizontalAxisValue < 0)
             {
                 Debug.Log("Left");
                 transform.LookAt(transform.position - camR);
-                Debug.Log(transform.rotation);
-                Debug.Log(transform.position - camR);
             }
 
             transform.position += transform.forward * Time.deltaTime * speed;
