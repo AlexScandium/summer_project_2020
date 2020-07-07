@@ -9,9 +9,15 @@ using UnityEngine;
 namespace Com.WWZR.WorldWarZRoyal {
 	public class Player : MonoBehaviour
 	{
-        [SerializeField] private const string HORIZONTAL_AXIS = "Horizontal";
-        [SerializeField] private const string VERTICAL_AXIS = "Vertical";
+        private const string HORIZONTAL_AXIS = "Horizontal";
+        private const string VERTICAL_AXIS = "Vertical";
+        private const string SPRINT_BUTTON = "Fire1";
+
         [SerializeField] private float speed = 5f;
+        [SerializeField] private float maxSpeed = 7.5f;
+        private float startSpeed;
+        
+        [SerializeField] private float acceleration = 0.5f;
 
         private void Start()
         {
@@ -20,10 +26,12 @@ namespace Com.WWZR.WorldWarZRoyal {
 
         private void Init()
         {
+            startSpeed = speed;
             SetModeMove();
         }
 
         private Action DoAction;
+        
 
         private void SetModeWait()
         {
@@ -46,6 +54,16 @@ namespace Com.WWZR.WorldWarZRoyal {
             float verticalAxisValue = Input.GetAxis(VERTICAL_AXIS);
             Vector3 direction = new Vector3();
 
+            if (Input.GetButton(SPRINT_BUTTON))
+            {
+                Debug.Log("on sprint");
+                speed += acceleration * Time.deltaTime;
+                speed = Mathf.Clamp(speed, startSpeed, maxSpeed);
+            }
+            else
+            {
+                speed = startSpeed;
+            }
 
             if (horizontalAxisValue != 0)
             {
