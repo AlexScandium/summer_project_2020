@@ -34,7 +34,6 @@ namespace Com.WWZR.WorldWarZRoyal {
         private void LateUpdate()
         {
             Vector3 currentPos = target.transform.position;
-            Debug.Log(previousTargetPos != currentPos);
 
             if (previousTargetPos != currentPos)
             {

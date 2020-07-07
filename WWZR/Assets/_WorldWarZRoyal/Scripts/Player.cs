@@ -72,6 +72,7 @@ namespace Com.WWZR.WorldWarZRoyal {
         private Vector3 startLookPosition = new Vector3();
         private Vector3 endLookPosition = new Vector3();
         private Vector3 lookPosition = new Vector3();
+        private bool isExtremeRotation = false;
 
         protected override void DoActionMove()
         {
@@ -128,8 +129,22 @@ namespace Com.WWZR.WorldWarZRoyal {
                 endLookPosition = transform.position - cameraForward - cameraRight;
             }
 
-            lookPosition = Vector3.Lerp(startLookPosition, endLookPosition, speedRotation * Time.deltaTime);
+            if (startLookPosition.x == -endLookPosition.x || startLookPosition.z == -endLookPosition.z)
+            {
+                Debug.LogWarning("start extreme rotation");
+                isExtremeRotation = true;
+            }
 
+            
+            lookPosition = Vector3.Lerp(
+                startLookPosition,
+                endLookPosition, 
+                (isExtremeRotation ? speedRotation*2 : speedRotation) * Time.deltaTime);
+
+            if (lookPosition == endLookPosition) 
+            {
+                isExtremeRotation = false;
+            } 
             transform.LookAt(lookPosition);
 
             transform.position += transform.forward * Time.deltaTime * speed;
