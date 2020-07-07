@@ -17,6 +17,26 @@ namespace Com.WWZR.WorldWarZRoyal {
 
 
         #region Getters
+        private bool LeftForward
+        {
+            get { return (Input.GetKey(KeyCode.Q) && Input.GetKey(KeyCode.Z)); }
+        }
+
+        private bool LeftBack
+        {
+            get { return (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.S)); }
+        }
+        
+        private bool RightForward
+        {
+            get { return (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.Z)); }
+        }
+
+        private bool RightBack
+        {
+            get { return (Input.GetKey(KeyCode.Q) && Input.GetKey(KeyCode.S)); }
+        }
+
         private bool Left
         {
             get { return Input.GetKey(KeyCode.Q); }
@@ -56,7 +76,6 @@ namespace Com.WWZR.WorldWarZRoyal {
             cameraRight.y = 0;
 
             if (!Left && !Right && !Forward && !Back) return;
-
             if (Forward)
             {
                 Debug.Log("Up");
@@ -73,11 +92,34 @@ namespace Com.WWZR.WorldWarZRoyal {
                 Debug.Log("Right");
                 transform.LookAt(transform.position + cameraRight);
             }
-            if(Left)
+            if (Left)
             {
                 Debug.Log("Left");
                 transform.LookAt(transform.position - cameraRight);
             }
+
+            if (LeftForward) 
+            {
+                Debug.Log("LeftForward");
+                transform.LookAt(transform.position + cameraForward - cameraRight);
+            }
+            if (LeftBack) 
+            {
+                Debug.Log("LeftBack");
+                transform.LookAt(transform.position - cameraForward + cameraRight);
+            }
+            if (RightForward) 
+            {
+                Debug.Log("RightForward");
+                transform.LookAt(transform.position + cameraForward + cameraRight);
+            }
+            if (RightBack) 
+            {
+                Debug.Log("RightBack");
+                transform.LookAt(transform.position - cameraForward - cameraRight);
+            }
+
+            transform.rotation = Quaternion.FromToRotation(transform.forward,)
 
             transform.position += transform.forward * Time.deltaTime * speed;
         }
