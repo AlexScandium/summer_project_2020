@@ -3,15 +3,20 @@
 /// Date : 07/07/2020 14:23
 ///-----------------------------------------------------------------
 
+using Com.WWZR.WorldWarZRoyal.MobileObjects;
 using System;
 using UnityEngine;
 
 namespace Com.WWZR.WorldWarZRoyal {
-	public class Player : MonoBehaviour
+	public class Player : Mobile
 	{
-        private const string HORIZONTAL_AXIS = "Horizontal";
-        private const string VERTICAL_AXIS = "Vertical";
+        #region Properties
 
+        [SerializeField] private float speed = 5f;
+        private Camera mainCamera = null;
+
+
+        #region Getters
         private bool Left
         {
             get { return Input.GetKey(KeyCode.Q); }
@@ -31,79 +36,75 @@ namespace Com.WWZR.WorldWarZRoyal {
         {
             get { return Input.GetKey(KeyCode.S); }
         }
+            #endregion
 
-        private Action DoAction;
+        #endregion
 
-        private Camera mainCamera = null;
+        #region Methods
 
-        [SerializeField] private float speed = 5f;
+        protected override void Init()
+        {
+            mainCamera = Camera.main;
+            SetModeMove();
+        }
+
+        protected override void DoActionMove()
+        {
+            Vector3 cameraForward = mainCamera.transform.forward;
+            Vector3 cameraRight = mainCamera.transform.right;
+            cameraForward.y = 0;
+            cameraRight.y = 0;
+
+            if (!Left && !Right && !Forward && !Back) return;
+
+            if (Forward)
+            {
+                Debug.Log("Up");
+                transform.LookAt(transform.position + cameraForward);
+            }
+            if (Back)
+            {
+                Debug.Log("Down");
+                transform.LookAt(transform.position - cameraForward);
+            }
+
+            if (Right)
+            {
+                Debug.Log("Right");
+                transform.LookAt(transform.position + cameraRight);
+            }
+            if(Left)
+            {
+                Debug.Log("Left");
+                transform.LookAt(transform.position - cameraRight);
+            }
+
+            transform.position += transform.forward * Time.deltaTime * speed;
+        }
+
+        protected override void Hit()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void Die()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void Destroy()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+
+        #region Unity Methods
 
         private void Start()
         {
             Init();
         }
 
-        private void Init()
-        {
-            mainCamera = Camera.main;
-            SetModeMove();
-        }
-
-        private void SetModeWait()
-        {
-            DoAction = DoActionWait;
-        }
-
-        private void DoActionWait()
-        {
-
-        }
-
-        private void SetModeMove()
-        {
-            DoAction = DoActionMove;
-        }
-
-        private void DoActionMove()
-        {
-            float horizontalAxisValue = Input.GetAxis(HORIZONTAL_AXIS);
-            float verticalAxisValue = Input.GetAxis(VERTICAL_AXIS);
-
-            Vector3 camF = mainCamera.transform.forward;
-            Vector3 camR = mainCamera.transform.right;
-            camF.y = 0;
-            camR.y = 0;
-
-            if (!Left && !Right && !Forward && !Back) return;
-
-            if (verticalAxisValue > 0)
-            {
-                Debug.Log("Up");
-                transform.LookAt(transform.position + camF);
-            }
-            if (verticalAxisValue < 0 )
-            {
-                Debug.Log("Down");
-                transform.LookAt(transform.position - camF);
-            }
-
-            if (horizontalAxisValue > 0)
-            {
-                Debug.Log("Right");
-                transform.LookAt(transform.position + camR);
-            }
-            if(horizontalAxisValue < 0)
-            {
-                Debug.Log("Left");
-                transform.LookAt(transform.position - camR);
-            }
-
-            transform.position += transform.forward * Time.deltaTime * speed;
-        }
-
-        private void Update()
-        {
-            DoAction();
-        }
+        #endregion
     }
 }

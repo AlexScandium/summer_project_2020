@@ -8,18 +8,27 @@ using UnityEngine;
 namespace Com.WWZR.WorldWarZRoyal {
 	public class FollowingCamera : MonoBehaviour
 	{
-		[SerializeField] private GameObject target = null;
+        #region Properties
+
+        [SerializeField] private GameObject target = null;
         [SerializeField] private float speed = 1f;
         private Vector3 previousTargetPos;
+
+        #endregion
+
+        #region Methods
+        private void Init()
+        {
+            previousTargetPos = target.transform.position;
+        }
+
+        #endregion
+
+        #region UnityMethods
 
         private void Start()
         {
             Init();
-        }
-
-        private void Init()
-        {
-            previousTargetPos = target.transform.position;
         }
 
         private void LateUpdate()
@@ -33,5 +42,7 @@ namespace Com.WWZR.WorldWarZRoyal {
                 previousTargetPos = currentPos;
             }
         }
+
+        #endregion
     }
 }
