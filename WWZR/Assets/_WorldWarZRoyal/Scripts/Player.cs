@@ -13,6 +13,7 @@ namespace Com.WWZR.WorldWarZRoyal {
         #region Properties
 
         [SerializeField] private float speed = 5f;
+        [SerializeField] private float speedRotation = 5f;
         private Camera mainCamera = null;
 
 
@@ -68,58 +69,68 @@ namespace Com.WWZR.WorldWarZRoyal {
             SetModeMove();
         }
 
+        private Vector3 startLookPosition = new Vector3();
+        private Vector3 endLookPosition = new Vector3();
+        private Vector3 lookPosition = new Vector3();
+
         protected override void DoActionMove()
         {
             Vector3 cameraForward = mainCamera.transform.forward;
             Vector3 cameraRight = mainCamera.transform.right;
+            
             cameraForward.y = 0;
             cameraRight.y = 0;
 
             if (!Left && !Right && !Forward && !Back) return;
+
+            startLookPosition = transform.position + transform.forward;
+
             if (Forward)
             {
                 Debug.Log("Up");
-                transform.LookAt(transform.position + cameraForward);
+                endLookPosition = transform.position + cameraForward;
             }
             if (Back)
             {
                 Debug.Log("Down");
-                transform.LookAt(transform.position - cameraForward);
+                endLookPosition = transform.position - cameraForward;
             }
 
             if (Right)
             {
                 Debug.Log("Right");
-                transform.LookAt(transform.position + cameraRight);
+                endLookPosition = transform.position + cameraRight;
             }
             if (Left)
             {
                 Debug.Log("Left");
-                transform.LookAt(transform.position - cameraRight);
+                endLookPosition = transform.position - cameraRight;
             }
 
             if (LeftForward) 
             {
                 Debug.Log("LeftForward");
-                transform.LookAt(transform.position + cameraForward - cameraRight);
+                endLookPosition = transform.position + cameraForward - cameraRight;
             }
             if (LeftBack) 
             {
                 Debug.Log("LeftBack");
-                transform.LookAt(transform.position - cameraForward + cameraRight);
+                endLookPosition = transform.position - cameraForward + cameraRight;
             }
             if (RightForward) 
             {
                 Debug.Log("RightForward");
-                transform.LookAt(transform.position + cameraForward + cameraRight);
+                endLookPosition = transform.position + cameraForward + cameraRight;
             }
             if (RightBack) 
             {
                 Debug.Log("RightBack");
-                transform.LookAt(transform.position - cameraForward - cameraRight);
+                endLookPosition = transform.position - cameraForward - cameraRight;
             }
 
-            transform.rotation = Quaternion.FromToRotation(transform.forward,)
+            lookPosition = Vector3.Lerp(startLookPosition, endLookPosition, speedRotation * Time.deltaTime);
+
+            transform.LookAt(lookPosition);
 
             transform.position += transform.forward * Time.deltaTime * speed;
         }
