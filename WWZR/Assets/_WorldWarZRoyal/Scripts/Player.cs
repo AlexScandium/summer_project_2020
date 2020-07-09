@@ -5,6 +5,7 @@
 
 using Com.WWZR.WorldWarZRoyal.MobileObjects;
 using System;
+using System.Collections;
 using UnityEngine;
 
 namespace Com.WWZR.WorldWarZRoyal {
@@ -14,6 +15,7 @@ namespace Com.WWZR.WorldWarZRoyal {
 
         [SerializeField] private float speed = 5f;
         [SerializeField] private float speedRotation = 5f;
+        [SerializeField] private float speedExtremeRotation = 5f;
         private Camera mainCamera = null;
 
 
@@ -88,7 +90,7 @@ namespace Com.WWZR.WorldWarZRoyal {
             }
 
             //Avancée du joueur
-            //transform.position += transform.forward * Time.deltaTime * speed;
+            transform.position += transform.forward * Time.deltaTime * speed;
         }
 
         private void Rotate()
@@ -148,33 +150,33 @@ namespace Com.WWZR.WorldWarZRoyal {
             Vector3 playerToEnd = endLookPosition - transform.position;
             float angleBtwForwardAndEnd = Vector3.Angle(playerToForward, playerToEnd);
 
-            Debug.Log(angleBtwForwardAndEnd);
-
-            if (!isExtremeRotation && angleBtwForwardAndEnd >= 135)
+            if (!isExtremeRotation && angleBtwForwardAndEnd >= 90)
             {
                 Debug.LogWarning("start extreme rotation");
                 isExtremeRotation = true;
             }
-            else if (isExtremeRotation && lookPosition == endLookPosition)
+            else if (isExtremeRotation && angleBtwForwardAndEnd <= 0.1f)
             {
+                Debug.LogWarning("finish extreme rotation");
                 isExtremeRotation = false;
             }
 
-            /* Move by LookAt
+            // Move by LookAt
             lookPosition = Vector3.Lerp(
                 startLookPosition,
-                endLookPosition, 
-                (isExtremeRotation ? speedRotation * 1.5f : speedRotation) * Time.deltaTime);
+                endLookPosition,
+                (isExtremeRotation ? speedRotation * speedExtremeRotation : speedRotation) * Time.deltaTime);
 
             transform.LookAt(lookPosition);
-            */
+
 
             //Rotation instantanée
             //transform.rotation = Quaternion.LookRotation(endLookPosition, Vector3.up);
 
-            transform.rotation = Quaternion.Lerp(transform.rotation,
-                                                Quaternion.LookRotation(endLookPosition, Vector3.up),
-                                                (isExtremeRotation ? speedRotation * 1.5f : speedRotation) * Time.deltaTime);
+            //transform.rotation = Quaternion.Lerp(transform.rotation,
+            //                                    Quaternion.LookRotation(endLookPosition, Vector3.up),
+            //                                    (isExtremeRotation ? speedRotation * speedExtremeRotation : speedRotation) * Time.deltaTime);
+
         }
 
         protected override void Hit()
