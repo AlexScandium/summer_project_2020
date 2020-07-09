@@ -12,53 +12,56 @@ namespace Com.WWZR.WorldWarZRoyal {
 	public class Player : Mobile
 	{
         #region Properties
-
+        [Header("Move properties")]
+        
         [SerializeField] private float speed = 5f;
         [SerializeField] private float speedRotation = 5f;
+
+        /// <summary>
+        /// Factor to accelerate the rotation when is on extreme rotation
+        /// </summary>
         [SerializeField] private float speedExtremeRotation = 5f;
+
+        /// <summary>
+        /// Current main camera
+        /// </summary>
         private Camera mainCamera = null;
 
+        /// <summary>
+        /// Vector Forward of the main camera
+        /// </summary>
+        private Vector3 cameraForward;
 
-        #region Getters
-        private bool LeftForward
-        {
-            get { return (Input.GetKey(KeyCode.Q) && Input.GetKey(KeyCode.Z)); }
-        }
+        /// <summary>
+        /// Vector Right of the main camera
+        /// </summary>
+        private Vector3 cameraRight;
 
-        private bool LeftBack
-        {
-            get { return (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.S)); }
-        }
-        
-        private bool RightForward
-        {
-            get { return (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.Z)); }
-        }
+        /// <summary>
+        /// Directing vector at the beginning of the rotation
+        /// </summary>
+        private Vector3 startOrientation = new Vector3();
 
-        private bool RightBack
-        {
-            get { return (Input.GetKey(KeyCode.Q) && Input.GetKey(KeyCode.S)); }
-        }
+        /// <summary>
+        /// Directing vector of the target of the rotation
+        /// </summary>
+        private Vector3 endOrientation = new Vector3();
 
-        private bool Left
-        {
-            get { return Input.GetKey(KeyCode.Q); }
-        }
+        /// <summary>
+        /// Determine if a rotation is too high and need to accelerate the rotation
+        /// </summary>
+        private bool isExtremeRotation = false;
 
-        private bool Right
-        {
-            get { return Input.GetKey(KeyCode.D); }
-        }
-
-        private bool Forward
-        {
-            get { return Input.GetKey(KeyCode.Z); }
-        }
-
-        private bool Back
-        {
-            get { return Input.GetKey(KeyCode.S); }
-        }
+            #region Getters
+        private bool IsNoKeyPressed { get => (!IsLeft && !IsRight && !IsForward && !IsBack); }
+        private bool IsLeftForward { get => (Input.GetKey(KeyCode.Q) && Input.GetKey(KeyCode.Z)); }
+        private bool IsLeftBack { get => (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.S)); }
+        private bool IsRightForward { get => (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.Z)); }
+        private bool IsRightBack { get => (Input.GetKey(KeyCode.Q) && Input.GetKey(KeyCode.S)); }
+        private bool IsLeft { get => Input.GetKey(KeyCode.Q); }
+        private bool IsRight { get => Input.GetKey(KeyCode.D); }
+        private bool IsForward { get => Input.GetKey(KeyCode.Z); }
+        private bool IsBack { get => Input.GetKey(KeyCode.S); }
             #endregion
 
         #endregion
@@ -68,13 +71,15 @@ namespace Com.WWZR.WorldWarZRoyal {
         protected override void Init()
         {
             mainCamera = Camera.main;
+
+            cameraForward = mainCamera.transform.forward;
+            cameraRight = mainCamera.transform.right;
+
+            cameraForward.y = 0;
+            cameraRight.y = 0;
+
             SetModeMove();
         }
-
-        private Vector3 startLookPosition = new Vector3();
-        private Vector3 endLookPosition = new Vector3();
-        private Vector3 lookPosition = new Vector3();
-        private bool isExtremeRotation = false;
 
         protected override void DoActionMove()
         {
@@ -82,73 +87,49 @@ namespace Com.WWZR.WorldWarZRoyal {
             Move();
         }
 
+        /// <summary>
+        /// Movement of the player by it forward
+        /// </summary>
         private void Move()
         {
-            if (!Left && !Right && !Forward && !Back)
-            {
-                return;
-            }
+            if (IsNoKeyPressed) return;
 
             //Avancée du joueur
-            transform.position += transform.forward * Time.deltaTime * speed;
+            transform.position = transform.position + transform.forward * Time.deltaTime * speed;
         }
 
+        /// <summary>
+        /// Rotate the player depending of the orientation of the camera
+        /// </summary>
         private void Rotate()
         {
-            Vector3 cameraForward = mainCamera.transform.forward;
-            Vector3 cameraRight = mainCamera.transform.right;
+            //Detect if a key is pressed
+            if (IsNoKeyPressed) return;
 
-            cameraForward.y = 0;
-            cameraRight.y = 0;
+            //Determination of the orientation of the player
+            startOrientation = transform.position + transform.forward;
 
-            if (!Left && !Right && !Forward && !Back)
-            {
-                return;
-            }
+            //Determination of the direction to look depending on the keys pressed
+            if (IsLeftForward)
+                endOrientation = transform.position + cameraForward - cameraRight;
+            else if (IsLeftBack)
+                endOrientation = transform.position - cameraForward + cameraRight;
+            else if (IsRightForward)
+                endOrientation = transform.position + cameraForward + cameraRight;
+            else if (IsRightBack)
+                endOrientation = transform.position - cameraForward - cameraRight;
+            else if (IsForward)
+                endOrientation = transform.position + cameraForward;
+            else if (IsBack)
+                endOrientation = transform.position - cameraForward;
+            else if (IsRight)
+                endOrientation = transform.position + cameraRight;
+            else if (IsLeft)
+                endOrientation = transform.position - cameraRight;
 
-
-            startLookPosition = transform.position + transform.forward;
-
-
-            if (Forward)
-            {
-                endLookPosition = transform.position + cameraForward;
-            }
-            if (Back)
-            {
-                endLookPosition = transform.position - cameraForward;
-            }
-
-            if (Right)
-            {
-                endLookPosition = transform.position + cameraRight;
-            }
-            if (Left)
-            {
-                endLookPosition = transform.position - cameraRight;
-            }
-
-            if (LeftForward)
-            {
-                endLookPosition = transform.position + cameraForward - cameraRight;
-            }
-            if (LeftBack)
-            {
-                endLookPosition = transform.position - cameraForward + cameraRight;
-            }
-            if (RightForward)
-            {
-                endLookPosition = transform.position + cameraForward + cameraRight;
-            }
-            if (RightBack)
-            {
-                endLookPosition = transform.position - cameraForward - cameraRight;
-            }
-
-
-            Vector3 playerToForward = startLookPosition - transform.position;
-            Vector3 playerToEnd = endLookPosition - transform.position;
-            float angleBtwForwardAndEnd = Vector3.Angle(playerToForward, playerToEnd);
+            //Determine if a rotation need to be accelerate
+            Vector3 playerToEnd = endOrientation - transform.position;
+            float angleBtwForwardAndEnd = Vector3.Angle(transform.forward, playerToEnd);
 
             if (!isExtremeRotation && angleBtwForwardAndEnd >= 90)
             {
@@ -161,22 +142,10 @@ namespace Com.WWZR.WorldWarZRoyal {
                 isExtremeRotation = false;
             }
 
-            // Move by LookAt
-            lookPosition = Vector3.Lerp(
-                startLookPosition,
-                endLookPosition,
-                (isExtremeRotation ? speedRotation * speedExtremeRotation : speedRotation) * Time.deltaTime);
-
-            transform.LookAt(lookPosition);
-
-
-            //Rotation instantanée
-            //transform.rotation = Quaternion.LookRotation(endLookPosition, Vector3.up);
-
-            //transform.rotation = Quaternion.Lerp(transform.rotation,
-            //                                    Quaternion.LookRotation(endLookPosition, Vector3.up),
-            //                                    (isExtremeRotation ? speedRotation * speedExtremeRotation : speedRotation) * Time.deltaTime);
-
+            //Rotate the player
+            transform.rotation = Quaternion.Lerp(transform.rotation,
+                                                Quaternion.LookRotation(playerToEnd, Vector3.up),
+                                                (isExtremeRotation ? speedRotation * speedExtremeRotation : speedRotation) * Time.deltaTime);
         }
 
         protected override void Hit()
