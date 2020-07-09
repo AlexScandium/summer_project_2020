@@ -13,13 +13,26 @@ namespace Com.WWZR.WorldWarZRoyal {
         [SerializeField] private GameObject target = null;
         [SerializeField] private float speed = 1f;
         private Vector3 previousTargetPos;
-
+        [SerializeField] private Vector3 cameraFromPlayerPos = new Vector3();
         #endregion
 
         #region Methods
         private void Init()
         {
+            SetStartCameraPosition();
             previousTargetPos = target.transform.position;
+        }
+
+        private void SetStartCameraPosition()
+        {
+            if (cameraFromPlayerPos == Vector3.zero) 
+            {
+                Debug.LogWarning("Forget to set a camera settings or to paste camera position to this Vector3," +
+                    " it will use the position of the camera. Ignore this warning if you volontarily us the Vector3.zero as a parameter");
+                cameraFromPlayerPos = transform.position;
+            }
+            
+            transform.position = target.transform.position + cameraFromPlayerPos;
         }
 
         #endregion

@@ -76,78 +76,105 @@ namespace Com.WWZR.WorldWarZRoyal {
 
         protected override void DoActionMove()
         {
+            Rotate();
+            Move();
+        }
+
+        private void Move()
+        {
+            if (!Left && !Right && !Forward && !Back)
+            {
+                return;
+            }
+
+            //Avancée du joueur
+            //transform.position += transform.forward * Time.deltaTime * speed;
+        }
+
+        private void Rotate()
+        {
             Vector3 cameraForward = mainCamera.transform.forward;
             Vector3 cameraRight = mainCamera.transform.right;
-            
+
             cameraForward.y = 0;
             cameraRight.y = 0;
 
-            if (!Left && !Right && !Forward && !Back) return;
+            if (!Left && !Right && !Forward && !Back)
+            {
+                return;
+            }
+
 
             startLookPosition = transform.position + transform.forward;
 
+
             if (Forward)
             {
-                Debug.Log("Up");
                 endLookPosition = transform.position + cameraForward;
             }
             if (Back)
             {
-                Debug.Log("Down");
                 endLookPosition = transform.position - cameraForward;
             }
 
             if (Right)
             {
-                Debug.Log("Right");
                 endLookPosition = transform.position + cameraRight;
             }
             if (Left)
             {
-                Debug.Log("Left");
                 endLookPosition = transform.position - cameraRight;
             }
 
-            if (LeftForward) 
+            if (LeftForward)
             {
-                Debug.Log("LeftForward");
                 endLookPosition = transform.position + cameraForward - cameraRight;
             }
-            if (LeftBack) 
+            if (LeftBack)
             {
-                Debug.Log("LeftBack");
                 endLookPosition = transform.position - cameraForward + cameraRight;
             }
-            if (RightForward) 
+            if (RightForward)
             {
-                Debug.Log("RightForward");
                 endLookPosition = transform.position + cameraForward + cameraRight;
             }
-            if (RightBack) 
+            if (RightBack)
             {
-                Debug.Log("RightBack");
                 endLookPosition = transform.position - cameraForward - cameraRight;
             }
 
-            if (startLookPosition.x == -endLookPosition.x || startLookPosition.z == -endLookPosition.z)
+
+            Vector3 playerToForward = startLookPosition - transform.position;
+            Vector3 playerToEnd = endLookPosition - transform.position;
+            float angleBtwForwardAndEnd = Vector3.Angle(playerToForward, playerToEnd);
+
+            Debug.Log(angleBtwForwardAndEnd);
+
+            if (!isExtremeRotation && angleBtwForwardAndEnd >= 135)
             {
                 Debug.LogWarning("start extreme rotation");
                 isExtremeRotation = true;
             }
+            else if (isExtremeRotation && lookPosition == endLookPosition)
+            {
+                isExtremeRotation = false;
+            }
 
-            
+            /* Move by LookAt
             lookPosition = Vector3.Lerp(
                 startLookPosition,
                 endLookPosition, 
-                (isExtremeRotation ? speedRotation*2 : speedRotation) * Time.deltaTime);
+                (isExtremeRotation ? speedRotation * 1.5f : speedRotation) * Time.deltaTime);
 
-            if (lookPosition == endLookPosition) 
-            {
-                isExtremeRotation = false;
-            } 
             transform.LookAt(lookPosition);
+            */
 
-            transform.position += transform.forward * Time.deltaTime * speed;
+            //Rotation instantanée
+            //transform.rotation = Quaternion.LookRotation(endLookPosition, Vector3.up);
+
+            transform.rotation = Quaternion.Lerp(transform.rotation,
+                                                Quaternion.LookRotation(endLookPosition, Vector3.up),
+                                                (isExtremeRotation ? speedRotation * 1.5f : speedRotation) * Time.deltaTime);
         }
 
         protected override void Hit()
