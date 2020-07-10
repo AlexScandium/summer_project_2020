@@ -27,7 +27,7 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
 			DoAction = DoActionWait;
 		}
 
-		protected void SetModeMove()
+		virtual protected void SetModeMove()
         {
 			DoAction = DoActionMove;
 		}
