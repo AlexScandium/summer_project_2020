@@ -6,22 +6,21 @@
 using System;
 using Com.AndyBastel.ExperimentLab.Common;
 using Com.IsartDigital.Common;
+using Com.WWZR.WorldWarZRoyal.MobileObjects;
 using UnityEngine;
 
 namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
-	public class Bot : StateObject {
+	public class Bot : Mobile {
 		public static string TAG = "Bot";
 
-		[SerializeField] protected float speed = 15f;
-		[SerializeField] protected float rotationSpeed = 180f;
 		[SerializeField] protected ChildTrigger3D childTrigger = null;
 
 		protected Transform target = null;
 		protected Vector3 randomPoint = Vector3.zero;
 
-		protected override void Start()
+		private void Start()
 		{
-			base.Start();
+			Init();
 
 			childTrigger.OnChildTriggerEnter += ChildTrigger_OnChildTriggerEnter;
 			childTrigger.OnChildTriggerExit += ChildTrigger_OnChildTriggerExit;
@@ -43,7 +42,7 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 			if (other.transform == target)
 				target = null;
 
-			SetModeNormal();
+			SetModeMove();
 		}
 
 		private void SetModeChase()
@@ -57,26 +56,46 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 			Rotate(transform.position - target.position);
 		}
 
-		protected override void SetModeNormal()
+		protected override void SetModeMove()
 		{
-			base.SetModeNormal();
+			base.SetModeMove();
 
 			randomPoint = UnityEngine.Random.insideUnitSphere * 50;
 			randomPoint.y = 0;
 		}
 
-		protected override void DoActionNormal()
+		protected override void DoActionMove()
 		{
 			transform.position = Vector3.MoveTowards(transform.position, randomPoint, speed * Time.deltaTime);
 
 			Rotate(transform.position - randomPoint);
 
-			if (transform.position == randomPoint) SetModeNormal(); 
+			if (transform.position == randomPoint) SetModeMove(); 
 		}
 
 		protected void Rotate(Vector3 forward)
 		{
-			transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(forward), rotationSpeed * Time.deltaTime);
+			transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(forward), speedRotation * Time.deltaTime);
+		}
+
+		protected override void Init()
+		{
+			SetModeMove();
+		}
+
+		protected override void Hit()
+		{
+			Debug.Log("Hit " + name);
+		}
+
+		protected override void Die()
+		{
+			Debug.Log("See you");
+		}
+
+		protected override void Destroy()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
