@@ -15,7 +15,7 @@ namespace Com.WWZR.WorldWarZRoyal {
         [Header("Move properties")]
         
         [SerializeField] private float speed = 5f;
-        [SerializeField] private float speedRotation = 5f;
+        [SerializeField] private float speedRotation = 180f;
 
         /// <summary>
         /// Factor to accelerate the rotation when is on extreme rotation
@@ -143,9 +143,13 @@ namespace Com.WWZR.WorldWarZRoyal {
             }
 
             //Rotate the player
-            transform.rotation = Quaternion.Lerp(transform.rotation,
-                                                Quaternion.LookRotation(playerToEnd, Vector3.up),
-                                                (isExtremeRotation ? speedRotation * speedExtremeRotation : speedRotation) * Time.deltaTime);
+            transform.rotation = Quaternion.RotateTowards(
+                                            transform.rotation,
+                                            Quaternion.LookRotation(playerToEnd, Vector3.up),
+                                            (isExtremeRotation ? speedRotation * speedExtremeRotation : speedRotation) * Time.deltaTime);
+            //transform.rotation = Quaternion.Lerp(transform.rotation,
+            //                                    Quaternion.LookRotation(playerToEnd, Vector3.up),
+            //                                    (isExtremeRotation ? speedRotation * speedExtremeRotation : speedRotation) * Time.deltaTime);
         }
 
         protected override void Hit()
