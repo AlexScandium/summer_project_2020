@@ -63,7 +63,9 @@ namespace Com.WWZR.WorldWarZRoyal {
         private bool IsRight { get => Input.GetKey(KeyCode.D); }
         private bool IsForward { get => Input.GetKey(KeyCode.Z); }
         private bool IsBack { get => Input.GetKey(KeyCode.S); }
-            #endregion
+        #endregion
+
+        [SerializeField] private Animator animator;
 
         #endregion
 
@@ -132,7 +134,10 @@ namespace Com.WWZR.WorldWarZRoyal {
 
         protected override void Hit()
         {
-            throw new NotImplementedException();
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                animator.SetTrigger("Hit");
+            }
         }
 
         protected override void Die()
@@ -151,6 +156,12 @@ namespace Com.WWZR.WorldWarZRoyal {
         private void Start()
         {
             Init();
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+            Hit();
         }
 
         #endregion

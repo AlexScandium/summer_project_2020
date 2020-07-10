@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/_WorldWarZRoyal/Scenes/Researches/Charcter And Camera Settings.unity
+- path: Assets/_WorldWarZRoyal/Scenes/Researches/Hit System.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0
