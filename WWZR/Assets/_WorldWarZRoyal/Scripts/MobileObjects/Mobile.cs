@@ -55,6 +55,11 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
 
         #region Unity Methods
 
+		protected virtual void Start()
+        {
+			Init();
+        }
+
         protected virtual void Update()
 		{
 			DoAction();

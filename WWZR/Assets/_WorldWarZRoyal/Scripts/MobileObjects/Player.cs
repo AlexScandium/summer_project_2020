@@ -8,7 +8,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-namespace Com.WWZR.WorldWarZRoyal {
+namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
 	public class Player : Mobile
 	{
         #region Properties
@@ -152,11 +152,6 @@ namespace Com.WWZR.WorldWarZRoyal {
         #endregion
 
         #region Unity Methods
-
-        private void Start()
-        {
-            Init();
-        }
 
         protected override void Update()
         {

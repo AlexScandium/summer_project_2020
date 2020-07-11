@@ -5,7 +5,7 @@
 
 using UnityEngine;
 
-namespace Com.WWZR.WorldWarZRoyal {
+namespace Com.WWZR.WorldWarZRoyal.Cameras {
 	public class FollowingCamera : MonoBehaviour
 	{
         #region Properties
