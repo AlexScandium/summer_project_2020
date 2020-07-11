@@ -11,9 +11,17 @@ using UnityEngine;
 
 namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 	public class Bot : Mobile {
-		public static string TAG = "Bot";
+		public const string TAG = "Bot";
 
+		public static float limitRadius;
+
+		/// <summary>
+		/// This is the detection area
+		/// </summary>
 		[SerializeField] protected ChildTrigger3D childTrigger = null;
+
+		[SerializeField] protected uint life = 5;
+		[SerializeField] protected uint damage = 1;
 
 		protected Transform target = null;
 		protected Vector3 randomPoint = Vector3.zero;
@@ -52,7 +60,9 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 
 		private void DoActionChase()
 		{
-			transform.position = Vector3.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
+			Vector3 targetOnPlanePos = target.position;
+			targetOnPlanePos.y = transform.position.y;
+			transform.position = Vector3.MoveTowards(transform.position, targetOnPlanePos, speed * Time.deltaTime);
 			Rotate(transform.position - target.position);
 		}
 
@@ -60,7 +70,7 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 		{
 			base.SetModeMove();
 
-			randomPoint = UnityEngine.Random.insideUnitSphere * 50;
+			randomPoint = UnityEngine.Random.insideUnitSphere * limitRadius;
 			randomPoint.y = 0;
 		}
 
@@ -82,6 +92,13 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 		{
 			SetModeMove();
 		}
+
+		private void OnTriggerEnter(Collider other)
+		{
+			Hit();
+		}
+
+
 
 		protected override void Hit()
 		{
