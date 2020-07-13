@@ -13,7 +13,7 @@ namespace Com.WWZR.WorldWarZRoyal.Cameras {
         [SerializeField] private GameObject target = null;
         [SerializeField] private float speed = 1f;
         private Vector3 previousTargetPos;
-        [SerializeField] private Vector3 cameraFromPlayerPos = new Vector3();
+        [SerializeField] private Vector3 cameraOffset = new Vector3();
         #endregion
 
         #region Methods
@@ -25,14 +25,14 @@ namespace Com.WWZR.WorldWarZRoyal.Cameras {
 
         private void SetStartCameraPosition()
         {
-            if (cameraFromPlayerPos == Vector3.zero) 
+            if (cameraOffset == Vector3.zero) 
             {
                 Debug.LogWarning("Forget to set a camera settings or to paste camera position to this Vector3," +
                     " it will use the position of the camera. Ignore this warning if you volontarily us the Vector3.zero as a parameter");
-                cameraFromPlayerPos = transform.position;
+                cameraOffset = transform.position;
             }
             
-            transform.position = target.transform.position + cameraFromPlayerPos;
+            transform.position = target.transform.position + cameraOffset;
         }
 
         #endregion
@@ -46,13 +46,10 @@ namespace Com.WWZR.WorldWarZRoyal.Cameras {
 
         private void LateUpdate()
         {
-            Vector3 currentPos = target.transform.position;
+            Vector3 desiredPostion = target.transform.position + cameraOffset;
+            Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPostion, speed * Time.deltaTime);
+            transform.position = smoothedPosition;
 
-            if (previousTargetPos != currentPos)
-            {
-                transform.position += (currentPos - previousTargetPos) * speed;
-                previousTargetPos = currentPos;
-            }
         }
 
         #endregion

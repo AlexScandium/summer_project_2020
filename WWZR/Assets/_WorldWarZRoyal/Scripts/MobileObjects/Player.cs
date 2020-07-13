@@ -3,13 +3,13 @@
 /// Date : 07/07/2020 14:23
 ///-----------------------------------------------------------------
 
-using Com.WWZR.WorldWarZRoyal.MobileObjects;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
-	public class Player : Mobile
+namespace Com.WWZR.WorldWarZRoyal.MobileObjects
+{
+    public class Player : Mobile
 	{
         #region Properties
                 
@@ -53,6 +53,10 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
         /// </summary>
         private Vector3 cameraRight;
 
+
+        [SerializeField] private Transform weaponContainer = null;
+        [SerializeField] private List<Weapon> weaponList = new List<Weapon>();
+
             #region Getters
         private bool IsNoKeyPressed { get => (!IsLeft && !IsRight && !IsForward && !IsBack); }
         private bool IsLeftForward { get => (Input.GetKey(KeyCode.Q) && Input.GetKey(KeyCode.Z)); }
@@ -75,6 +79,8 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
         {
             GetCameraInfos();
             SetModeMove();
+            AddStick();
+            //AddRevolver();
         }
 
         private void GetCameraInfos()
@@ -130,6 +136,28 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
                 isLargeAngleRotation = false;
 
             Rotate(directionToLook, isLargeAngleRotation ? speedRotation * speedRotationFactor : speedRotation);
+        }
+
+        private void AddStick()
+        {
+            AddWeapon("Stick");
+        }
+
+        private void AddRevolver()
+        {
+            AddWeapon("Revolver");
+        }
+
+        private void AddWeapon(String weaponName)
+        {
+            Weapon wp = weaponList.Find(x => x.Name == weaponName);
+
+            if (wp == null)
+            {
+                Debug.LogError("this weapon does not exist");
+                return;
+            }
+            Instantiate(wp.Prefab, weaponContainer);
         }
 
         protected override void Hit()
