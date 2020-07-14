@@ -95,16 +95,20 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 
 		private void OnTriggerEnter(Collider other)
 		{
-			Hit();
+			
 		}
 
 
 
-		protected override void Hit()
+		public override void Hit(uint damage)
 		{
 			Debug.Log("Hit " + name);
 		}
 
+		public override void Hurt(uint damage)
+		{
+			life = (uint)Mathf.Clamp(life - damage, 0, life);
+		}
 		protected override void Die()
 		{
 			Debug.Log("See you");
