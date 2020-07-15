@@ -4,8 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - MeleeWeapon
-  - DistanceWeapon
+  - Weapons/Bullet
+  - Weapons/Melee
   layers:
   - Default
   - TransparentFX

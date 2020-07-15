@@ -12,7 +12,8 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
     {
         #region Properties
 
-        [SerializeField] private const string MELEE_TAG = "MeleeWeapon";
+        [SerializeField] private const string MELEE_TAG = "Weapons/Melee";
+        [SerializeField] private const string BULLET_TAG = "Weapons/Bullet";
 
         /// <summary>
         /// Duration of invulnerable state after a hit
@@ -72,12 +73,12 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag(MELEE_TAG))
+            if (other.CompareTag(MELEE_TAG) || other.CompareTag(BULLET_TAG))
             {
                 if (isInvulnerable) return;
 
                 StartCoroutine(SetInvulnerableState());
-                Debug.Log("Hurt by melee weapon");
+                Debug.Log("Hurt by " + other);
 
                 LifePoint--;
                 Vector3 weaponPos = other.transform.position;
