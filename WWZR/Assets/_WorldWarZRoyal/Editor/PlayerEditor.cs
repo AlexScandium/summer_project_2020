@@ -35,6 +35,10 @@ namespace Com.WWZR.WorldWarZRoyal
             {
                 currentPlayer.AddRevolver();
             }
+            if (GUILayout.Button("Reload Revolver"))
+            {
+                currentPlayer.AddMaxAmmosToEquippedWeapon();
+            }
             if (GUILayout.Button("Remove weapon"))
             {
                 currentPlayer.RemoveWeapon();

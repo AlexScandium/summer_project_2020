@@ -24,8 +24,9 @@ namespace Com.WWZR.WorldWarZRoyal
 		[SerializeField] private float _damage = 1f;
 		public float Damage => _damage;
 
-		[SerializeField] private GameObject prefab;
+		[SerializeField] private GameObject prefab = null;
 		public GameObject Prefab => prefab;
+
 	}
 
 	public enum WeaponType

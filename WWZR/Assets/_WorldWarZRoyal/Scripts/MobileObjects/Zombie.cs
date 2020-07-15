@@ -11,7 +11,6 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
     public class Zombie : Mobile
     {
         #region Properties
-        [SerializeField] private float propulsion = 5f;
         [SerializeField] private float invulnerabilityDuration = 1f;
         private Rigidbody rb;
         private bool isInvulnerable = false;

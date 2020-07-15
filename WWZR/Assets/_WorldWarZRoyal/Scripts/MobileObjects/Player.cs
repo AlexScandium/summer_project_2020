@@ -3,6 +3,7 @@
 /// Date : 07/07/2020 14:23
 ///-----------------------------------------------------------------
 
+using Com.WWZR.WorldWarZRoyal.WeaponActions;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -53,11 +54,34 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
         /// </summary>
         private Vector3 cameraRight;
 
-
+        /// <summary>
+        /// Container of the gameObject of the weapon
+        /// </summary>
         [SerializeField] private Transform weaponContainer = null;
+
+        /// <summary>
+        /// List of scriptable objects Weapon which can be equipped to the player
+        /// </summary>
         [SerializeField] private List<Weapon> weaponList = new List<Weapon>();
 
-        private GameObject currentWeapon = null;
+        /// <summary>
+        /// Custom object to save the informations of the current weapon equipped
+        /// </summary>
+        private class EquippedWeapon
+        {
+            public Weapon weapon;
+            public GameObject weaponObject;
+
+            public EquippedWeapon(Weapon wp = null, GameObject gameObject = null)
+            {
+                weapon = wp;
+                weaponObject = gameObject;
+            }
+        }
+
+        readonly private EquippedWeapon currentEquippedWeapon = new EquippedWeapon();
+
+        private Action DoHitAction;
 
             #region Getters
         private bool IsNoKeyPressed { get => (!IsLeft && !IsRight && !IsForward && !IsBack); }
@@ -86,8 +110,33 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
 
         private void GetCurrentWeaponStart()
         {
-            if (weaponContainer.childCount > 0 && currentWeapon == null)
-                currentWeapon = weaponContainer.GetChild(0).gameObject;
+            if (weaponContainer.childCount > 0 && currentEquippedWeapon.weaponObject == null)
+            {
+                currentEquippedWeapon.weaponObject = weaponContainer.GetChild(0).gameObject;
+
+                Weapon wp = weaponList.Find(x => x.Prefab == currentEquippedWeapon.weaponObject);
+
+                currentEquippedWeapon.weapon = wp;
+                switch (wp.Type)
+                {
+                    case WeaponType.GUN:
+                        SetHitModeGun();
+                        break;
+                    case WeaponType.BLUNT:
+                        SetHitModeMelee();
+                        break;
+                    case WeaponType.EDGED:
+                        SetHitModeMelee();
+                        break;
+                    case WeaponType.NONE:
+                        SetHitModeNone();
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else
+                SetHitModeNone();
         }
 
         private void GetCameraInfos()
@@ -108,6 +157,50 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
 
             RotateByCamera();
             MoveForward(speed);
+        }
+
+        private void SetHitMode (Action action)
+        {
+            DoHitAction = action;
+        }
+
+        private void SetHitModeNone()
+        {
+            SetHitMode(DoHitActionNone);
+        }
+
+        private void DoHitActionNone() { }
+
+        private void SetHitModeMelee()
+        {
+            SetHitMode(DoHitActionMelee);
+        }
+
+        private void DoHitActionMelee()
+        {
+            animator.SetTrigger("Hit");
+            Debug.Log("Hit with melee weapon");
+        }
+
+        private void SetHitModeGun()
+        {
+            SetHitMode(DoHitActionGun);
+        }
+
+        private void DoHitActionGun()
+        {
+            currentEquippedWeapon.weaponObject.GetComponent<WeaponAction>().Shot();
+        }
+
+        public void AddMaxAmmosToEquippedWeapon()
+        {
+            if (currentEquippedWeapon.weapon == null) return;
+            if(currentEquippedWeapon.weapon.Type == WeaponType.GUN)
+            {
+                GunAction gunAction = currentEquippedWeapon.weaponObject.GetComponent<GunAction>();
+
+                gunAction.AddAmmos(gunAction.MaxAmmos);
+            }
         }
 
         /// <summary>
@@ -162,12 +255,15 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
                 GetCurrentWeaponStart();
             }
 
-            if (currentWeapon != null)
+            if (currentEquippedWeapon.weaponObject != null)
             {
                 if (Application.isEditor)
-                    DestroyImmediate(currentWeapon);
+                    DestroyImmediate(currentEquippedWeapon.weaponObject);
                 else
-                    Destroy(currentWeapon);
+                    Destroy(currentEquippedWeapon.weaponObject);
+
+                currentEquippedWeapon.weaponObject = null;
+                currentEquippedWeapon.weapon = null;
             }
         }
 
@@ -182,19 +278,36 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
             }
 
             if (Application.isEditor)
-            {
                 GetCurrentWeaponStart();
-            }
 
-            if (currentWeapon != null)
+            if (currentEquippedWeapon.weaponObject != null)
             {
                 if (Application.isEditor)
-                    DestroyImmediate(currentWeapon);
+                    DestroyImmediate(currentEquippedWeapon.weaponObject);
                 else
-                    Destroy(currentWeapon);
+                    Destroy(currentEquippedWeapon.weaponObject);
             }
 
-            currentWeapon = Instantiate(wp.Prefab, weaponContainer);
+            currentEquippedWeapon.weaponObject = Instantiate(wp.Prefab, weaponContainer);
+            currentEquippedWeapon.weapon = wp;
+
+            switch (wp.Type)
+            {
+                case WeaponType.GUN:
+                    SetHitModeGun();
+                    break;
+                case WeaponType.BLUNT:
+                    SetHitModeMelee();
+                    break;
+                case WeaponType.EDGED:
+                    SetHitModeMelee();
+                    break;
+                case WeaponType.NONE:
+                    SetHitModeNone();
+                    break;
+                default:
+                    break;
+            }
         }
 
 
@@ -202,7 +315,7 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                animator.SetTrigger("Hit");
+                DoHitAction();
             }
         }
 
