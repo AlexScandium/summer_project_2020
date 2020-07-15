@@ -31,12 +31,13 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
 			}
         }
 		protected Action DoAction;
+		protected Action DoHitAction;
 
-        #endregion
+		#endregion
 
-        #region Methods
+		#region Methods
 
-        protected abstract void Init();
+		protected abstract void Init();
 
 		protected void SetModeWait() {
 			DoAction = DoActionWait;

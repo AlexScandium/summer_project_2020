@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 5747933778336064135}
   - component: {fileID: 5873811782333812825}
   m_Layer: 0
-  m_Name: Gun
+  m_Name: Revolver
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76,10 +76,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f4a007e4fe08654bbf3a4a9313d4a63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Name: Revolver
   startPointsBullets:
   - {fileID: 3854753035033867838}
   bulletPrefab: {fileID: 1401136475071286102, guid: 8c058929bf8715b4d975e1adf04e3029,
     type: 3}
+  maxAmmos: 10
 --- !u!1 &5372541035754552217
 GameObject:
   m_ObjectHideFlags: 0

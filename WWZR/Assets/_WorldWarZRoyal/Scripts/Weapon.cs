@@ -7,13 +7,11 @@ using UnityEngine;
 
 namespace Com.WWZR.WorldWarZRoyal
 {
-
     [CreateAssetMenu(
 		menuName = "Equipments/Weapon",
 		fileName = "DefaultWeapon",
 		order = 0
 	)]
-	
 	public class Weapon : ScriptableObject {
 		[SerializeField] private string _name = "default";
 		public string Name => _name;
@@ -26,7 +24,6 @@ namespace Com.WWZR.WorldWarZRoyal
 
 		[SerializeField] private GameObject prefab = null;
 		public GameObject Prefab => prefab;
-
 	}
 
 	public enum WeaponType

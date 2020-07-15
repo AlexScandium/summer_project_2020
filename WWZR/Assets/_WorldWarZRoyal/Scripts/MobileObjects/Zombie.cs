@@ -11,13 +11,27 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
     public class Zombie : Mobile
     {
         #region Properties
+
+        [SerializeField] private const string MELEE_TAG = "MeleeWeapon";
+
+        /// <summary>
+        /// Duration of invulnerable state after a hit
+        /// </summary>
         [SerializeField] private float invulnerabilityDuration = 1f;
-        private Rigidbody rb;
+
+        /// <summary>
+        /// Bool defying the current state of the invulnerability
+        /// </summary>
         private bool isInvulnerable = false;
+
+        /// <summary>
+        /// Rigidbody of the current GameObject
+        /// </summary>
+        private Rigidbody rb;
 
         #endregion
 
-        #region Method
+        #region Methods
 
         protected override void Init()
         {
@@ -44,7 +58,7 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
         
         protected override void Die()
         {
-            Debug.Log("is dead", this);
+            Debug.Log(this + " is dead", this);
             Destroy(gameObject);
         }
 
@@ -58,22 +72,22 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("MeleeWeapon"))
+            if (other.CompareTag(MELEE_TAG))
             {
-                if (!isInvulnerable) 
-                {
-                    StartCoroutine(SetInvulnerableState());
-                    Debug.Log("hurt by melee weapon");
-                    LifePoint--;
-                    Vector3 weaponPos = other.transform.position;
+                if (isInvulnerable) return;
 
-                    Vector3 propulsionDir = transform.position - weaponPos;
-                    propulsionDir.y = 0;
-                    propulsionDir = propulsionDir.normalized;
+                StartCoroutine(SetInvulnerableState());
+                Debug.Log("Hurt by melee weapon");
 
-                    rb.AddForce(propulsionDir * other.GetComponent<Rigidbody>().mass, ForceMode.Impulse);
-                    rb.AddForce(Vector3.up * 2.5f, ForceMode.Impulse);
-                }
+                LifePoint--;
+                Vector3 weaponPos = other.transform.position;
+
+                Vector3 propulsionDir = transform.position - weaponPos;
+                propulsionDir.y = 0;
+                propulsionDir = propulsionDir.normalized;
+
+                rb.AddForce(propulsionDir * other.GetComponent<Rigidbody>().mass, ForceMode.Impulse);
+                rb.AddForce(Vector3.up * 2.5f, ForceMode.Impulse);
             }
         }
         #endregion

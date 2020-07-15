@@ -14,6 +14,10 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
 	{
         #region Properties
                 
+        [SerializeField] private Animator animator = null;
+
+        private const string TRIGGER_HIT = "Hit";
+
         /// <summary>
         /// Factor to accelerate the rotation when is on extreme rotation
         /// </summary>
@@ -81,9 +85,10 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
 
         readonly private EquippedWeapon currentEquippedWeapon = new EquippedWeapon();
 
-        private Action DoHitAction;
+        private const string WEAPON_STICK = "Stick";
+        private const string WEAPON_REVOLVER = "Revolver";
 
-            #region Getters
+            #region Controller Getters
         private bool IsNoKeyPressed { get => (!IsLeft && !IsRight && !IsForward && !IsBack); }
         private bool IsLeftForward { get => (Input.GetKey(KeyCode.Q) && Input.GetKey(KeyCode.Z)); }
         private bool IsLeftBack { get => (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.S)); }
@@ -95,8 +100,6 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
         private bool IsBack { get => Input.GetKey(KeyCode.S); }
         #endregion
 
-        [SerializeField] private Animator animator = null;
-
         #endregion
 
         #region Methods
@@ -106,37 +109,6 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
             GetCameraInfos();
             SetModeMove();
             GetCurrentWeaponStart();
-        }
-
-        private void GetCurrentWeaponStart()
-        {
-            if (weaponContainer.childCount > 0 && currentEquippedWeapon.weaponObject == null)
-            {
-                currentEquippedWeapon.weaponObject = weaponContainer.GetChild(0).gameObject;
-
-                Weapon wp = weaponList.Find(x => x.Prefab == currentEquippedWeapon.weaponObject);
-
-                currentEquippedWeapon.weapon = wp;
-                switch (wp.Type)
-                {
-                    case WeaponType.GUN:
-                        SetHitModeGun();
-                        break;
-                    case WeaponType.BLUNT:
-                        SetHitModeMelee();
-                        break;
-                    case WeaponType.EDGED:
-                        SetHitModeMelee();
-                        break;
-                    case WeaponType.NONE:
-                        SetHitModeNone();
-                        break;
-                    default:
-                        break;
-                }
-            }
-            else
-                SetHitModeNone();
         }
 
         private void GetCameraInfos()
@@ -150,6 +122,7 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
             cameraRight.y = 0;
         }
 
+        #region Moving methods
         protected override void DoActionMove()
         {
             //Detect if a key is pressed
@@ -157,49 +130,6 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
 
             RotateByCamera();
             MoveForward(speed);
-        }
-
-        private void SetHitMode (Action action)
-        {
-            DoHitAction = action;
-        }
-
-        private void SetHitModeNone()
-        {
-            SetHitMode(DoHitActionNone);
-        }
-
-        private void DoHitActionNone() { }
-
-        private void SetHitModeMelee()
-        {
-            SetHitMode(DoHitActionMelee);
-        }
-
-        private void DoHitActionMelee()
-        {
-            animator.SetTrigger("Hit");
-        }
-
-        private void SetHitModeGun()
-        {
-            SetHitMode(DoHitActionGun);
-        }
-
-        private void DoHitActionGun()
-        {
-            currentEquippedWeapon.weaponObject.GetComponent<WeaponAction>().Shot();
-        }
-
-        public void AddMaxAmmosToEquippedWeapon()
-        {
-            if (currentEquippedWeapon.weapon == null) return;
-            if(currentEquippedWeapon.weapon.Type == WeaponType.GUN)
-            {
-                GunAction gunAction = currentEquippedWeapon.weaponObject.GetComponent<GunAction>();
-
-                gunAction.AddAmmos(gunAction.MaxAmmos);
-            }
         }
 
         /// <summary>
@@ -236,23 +166,120 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
 
             Rotate(directionToLook, isLargeAngleRotation ? speedRotation * speedRotationFactor : speedRotation);
         }
+        #endregion
+
+        #region Fighting methods
+        protected override void Hit()
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+                DoHitAction();
+        }
+
+        private void GetCurrentWeaponStart()
+        {
+            if (weaponContainer.childCount > 0 && currentEquippedWeapon.weaponObject == null)
+            {
+                currentEquippedWeapon.weaponObject = weaponContainer.GetChild(0).gameObject;
+                Weapon wp = weaponList.Find(x => x.Name == currentEquippedWeapon.weaponObject.GetComponent<WeaponAction>().Name);
+                currentEquippedWeapon.weapon = wp;
+
+                if (wp != null)
+                {
+                    switch (wp.Type)
+                    {
+                        case WeaponType.GUN:
+                            SetHitModeGun();
+                            break;
+                        case WeaponType.BLUNT:
+                            SetHitModeMelee();
+                            break;
+                        case WeaponType.EDGED:
+                            SetHitModeMelee();
+                            break;
+                        case WeaponType.NONE:
+                            SetHitModeNone();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else
+                {
+                    SetHitModeNone();
+                }
+            }
+            else
+                SetHitModeNone();
+        }
+
+        private void SetHitMode (Action action)
+        {
+            DoHitAction = action;
+        }
+
+        private void SetHitModeNone()
+        {
+            SetHitMode(DoHitActionNone);
+        }
+
+        private void DoHitActionNone() { }
+
+        private void SetHitModeMelee()
+        {
+            SetHitMode(DoHitActionMelee);
+        }
+
+        private void DoHitActionMelee()
+        {
+            animator.SetTrigger(TRIGGER_HIT);
+        }
+
+        private void SetHitModeGun()
+        {
+            SetHitMode(DoHitActionGun);
+        }
+
+        private void DoHitActionGun()
+        {
+            currentEquippedWeapon.weaponObject.GetComponent<WeaponAction>().Shot();
+        }
+
+        public void AddMaxAmmosToEquippedWeapon()
+        {
+            if (currentEquippedWeapon.weapon == null) return;
+            if(currentEquippedWeapon.weapon.Type == WeaponType.GUN)
+            {
+                GunAction gunAction = currentEquippedWeapon.weaponObject.GetComponent<GunAction>();
+
+                gunAction.AddAmmos(gunAction.MaxAmmos);
+            }
+        }
+
+        //private void AddAmmosToEquippedWeapon(float addedAmmos)
+        //{
+        //    if (currentEquippedWeapon.weapon == null) return;
+        //    if (currentEquippedWeapon.weapon.Type == WeaponType.GUN)
+        //    {
+        //        GunAction gunAction = currentEquippedWeapon.weaponObject.GetComponent<GunAction>();
+
+        //        gunAction.AddAmmos((uint)addedAmmos);
+        //    }
+        //}
 
         public void AddStick()
         {
-            AddWeapon("Stick");
+            AddWeapon(WEAPON_STICK);
         }
 
         public void AddRevolver()
         {
-            AddWeapon("Revolver");
+            AddWeapon(WEAPON_REVOLVER);
         }
 
         public void RemoveWeapon()
         {
             if (Application.isEditor)
-            {
                 GetCurrentWeaponStart();
-            }
 
             if (currentEquippedWeapon.weaponObject != null)
             {
@@ -266,13 +293,13 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
             }
         }
 
-        private void AddWeapon(String weaponName)
+        private void AddWeapon(string weaponName)
         {
             Weapon wp = weaponList.Find(x => x.Name == weaponName);
 
             if (wp == null)
             {
-                Debug.LogError("this weapon does not exist");
+                Debug.LogError("This weapon does not exist");
                 return;
             }
 
@@ -309,14 +336,7 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
             }
         }
 
-
-        protected override void Hit()
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                DoHitAction();
-            }
-        }
+        #endregion
 
         protected override void Die()
         {

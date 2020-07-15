@@ -25,6 +25,8 @@ namespace Com.WWZR.WorldWarZRoyal
             base.OnInspectorGUI();
 
             GUILayout.Space(15);
+
+            #region Weapons Debugging
             EditorGUILayout.LabelField("Debug Weapons",EditorStyles.boldLabel);
 
             if (GUILayout.Button("Equip Stick"))
@@ -43,6 +45,8 @@ namespace Com.WWZR.WorldWarZRoyal
             {
                 currentPlayer.RemoveWeapon();
             }
+            #endregion
+
             GUILayout.Space(15);
         }
     }

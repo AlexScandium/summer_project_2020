@@ -8,13 +8,27 @@ using UnityEngine;
 namespace Com.WWZR.WorldWarZRoyal.WeaponActions {
 	public class BulletAction : MonoBehaviour
 	{
+        #region Properties
 
-		[SerializeField] private float speed = 10f;
-        [SerializeField] private float timeLife = 3f;
+        [SerializeField] private float speed = 10f;
+        [SerializeField] private float lifeTime = 3f;
+
+        #endregion
+
+        #region Methods
+
+        protected void MoveForward(float speed)
+        {
+            transform.position += transform.forward * Time.deltaTime * speed;
+        }
+
+        #endregion
+
+        #region Unity Methods
 
         private void OnEnable()
         {
-            Destroy(this.gameObject, timeLife);
+            Destroy(this.gameObject, lifeTime);
         }
 
         private void FixedUpdate()
@@ -22,9 +36,6 @@ namespace Com.WWZR.WorldWarZRoyal.WeaponActions {
             MoveForward(speed);   
         }
 
-        protected void MoveForward(float speed)
-        {
-            transform.position += transform.forward * Time.deltaTime * speed;
-        }
+        #endregion
     }
 }
