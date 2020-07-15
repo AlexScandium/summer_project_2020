@@ -14,7 +14,22 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
 		[Header("Move properties")]
 		[SerializeField] protected float speed = 5f;
 		[SerializeField] protected float speedRotation = 180f;
-
+		[SerializeField] protected float lifePoint = 3f;
+		
+		protected float LifePoint
+        {
+            get {
+				return lifePoint; 
+			}
+            set {
+				lifePoint = value;
+				Debug.Log(String.Concat(this, " has got ", lifePoint, " left."),this);
+				if (lifePoint <= 0)
+                {
+					Die();
+                }
+			}
+        }
 		protected Action DoAction;
 
         #endregion

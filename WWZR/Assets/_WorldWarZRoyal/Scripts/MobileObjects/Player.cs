@@ -95,7 +95,7 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
         private bool IsBack { get => Input.GetKey(KeyCode.S); }
         #endregion
 
-        [SerializeField] private Animator animator;
+        [SerializeField] private Animator animator = null;
 
         #endregion
 
@@ -179,7 +179,6 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
         private void DoHitActionMelee()
         {
             animator.SetTrigger("Hit");
-            Debug.Log("Hit with melee weapon");
         }
 
         private void SetHitModeGun()

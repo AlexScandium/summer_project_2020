@@ -44,7 +44,8 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
         
         protected override void Die()
         {
-            throw new System.NotImplementedException();
+            Debug.Log("is dead", this);
+            Destroy(gameObject);
         }
 
         protected override void Destroy()
@@ -63,6 +64,7 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
                 {
                     StartCoroutine(SetInvulnerableState());
                     Debug.Log("hurt by melee weapon");
+                    LifePoint--;
                     Vector3 weaponPos = other.transform.position;
 
                     Vector3 propulsionDir = transform.position - weaponPos;
