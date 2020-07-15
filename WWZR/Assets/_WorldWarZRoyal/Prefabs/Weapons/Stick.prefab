@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4079216934294308526}
   - component: {fileID: 2804610720034089003}
   - component: {fileID: 6817442858203977021}
+  - component: {fileID: -4663917219937980528}
   m_Layer: 0
   m_Name: Stick
   m_TagString: MeleeWeapon
@@ -623,3 +624,16 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &-4663917219937980528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6593521822117284141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a306c826f2affd46b3b22c5660e9e0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: Stick
