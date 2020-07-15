@@ -57,6 +57,8 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
         [SerializeField] private Transform weaponContainer = null;
         [SerializeField] private List<Weapon> weaponList = new List<Weapon>();
 
+        private GameObject currentWeapon = null;
+
             #region Getters
         private bool IsNoKeyPressed { get => (!IsLeft && !IsRight && !IsForward && !IsBack); }
         private bool IsLeftForward { get => (Input.GetKey(KeyCode.Q) && Input.GetKey(KeyCode.Z)); }
@@ -79,8 +81,13 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
         {
             GetCameraInfos();
             SetModeMove();
-            AddStick();
-            //AddRevolver();
+            GetCurrentWeaponStart();
+        }
+
+        private void GetCurrentWeaponStart()
+        {
+            if (weaponContainer.childCount > 0 && currentWeapon == null)
+                currentWeapon = weaponContainer.GetChild(0).gameObject;
         }
 
         private void GetCameraInfos()
@@ -138,14 +145,30 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
             Rotate(directionToLook, isLargeAngleRotation ? speedRotation * speedRotationFactor : speedRotation);
         }
 
-        private void AddStick()
+        public void AddStick()
         {
             AddWeapon("Stick");
         }
 
-        private void AddRevolver()
+        public void AddRevolver()
         {
             AddWeapon("Revolver");
+        }
+
+        public void RemoveWeapon()
+        {
+            if (Application.isEditor)
+            {
+                GetCurrentWeaponStart();
+            }
+
+            if (currentWeapon != null)
+            {
+                if (Application.isEditor)
+                    DestroyImmediate(currentWeapon);
+                else
+                    Destroy(currentWeapon);
+            }
         }
 
         private void AddWeapon(String weaponName)
@@ -157,8 +180,23 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
                 Debug.LogError("this weapon does not exist");
                 return;
             }
-            Instantiate(wp.Prefab, weaponContainer);
+
+            if (Application.isEditor)
+            {
+                GetCurrentWeaponStart();
+            }
+
+            if (currentWeapon != null)
+            {
+                if (Application.isEditor)
+                    DestroyImmediate(currentWeapon);
+                else
+                    Destroy(currentWeapon);
+            }
+
+            currentWeapon = Instantiate(wp.Prefab, weaponContainer);
         }
+
 
         protected override void Hit()
         {
