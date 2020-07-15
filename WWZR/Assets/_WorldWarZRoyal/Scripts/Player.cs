@@ -130,12 +130,18 @@ namespace Com.WWZR.WorldWarZRoyal {
             Rotate(directionToLook, isLargeAngleRotation ? speedRotation * speedRotationFactor : speedRotation);
         }
 
-        protected override void Hit()
+        public override void Hit(Mobile mobile, uint damage)
         {
             throw new NotImplementedException();
         }
 
-        protected override void Die()
+		public override void Hurt(uint damage)
+		{
+
+		}
+
+
+		protected override void Die()
         {
             throw new NotImplementedException();
         }

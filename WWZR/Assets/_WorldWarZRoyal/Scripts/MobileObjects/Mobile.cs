@@ -45,7 +45,7 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
 			transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(direction), rotationSpeed * Time.deltaTime);
 		}
 
-		public abstract void Hit(uint damage);
+		public abstract void Hit(Mobile mobile, uint damage);
 		public abstract void Hurt(uint damage);
 
 		protected abstract void Die();

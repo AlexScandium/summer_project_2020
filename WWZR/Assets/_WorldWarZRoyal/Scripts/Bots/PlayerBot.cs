@@ -28,6 +28,12 @@ namespace Com.AndyBastel.ExperimentLab.ExperimentLab.IA {
 
 		private void DoActionEscape()
 		{
+			if (target == null)
+			{
+				SetModeMove();
+				return;
+			}
+
 			Vector3 direction = -(target.position - transform.position).normalized * speed * Time.deltaTime;
 			direction.y = 0;
 			transform.position += direction;

@@ -41,6 +41,9 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 				if (target && (transform.position - target.transform.position).magnitude < (transform.position - other.transform.position).magnitude) return;
 
 				target = other.transform;
+
+				Debug.Log(target);
+
 				SetModeChase();
 			}
 		}
@@ -60,6 +63,15 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 
 		private void DoActionChase()
 		{
+			if (target == null)
+			{
+				SetModeMove();
+				return;
+			}
+				//Debug.Log("if condition");
+
+			//Debug.Log("Inside DoActionChase " + target);
+
 			Vector3 targetOnPlanePos = target.position;
 			targetOnPlanePos.y = transform.position.y;
 			transform.position = Vector3.MoveTowards(transform.position, targetOnPlanePos, speed * Time.deltaTime);
@@ -93,30 +105,37 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 			SetModeMove();
 		}
 
-		private void OnTriggerEnter(Collider other)
+		virtual protected void OnTriggerEnter(Collider other)
 		{
-			
+
+			if(other.GetComponent<Mobile>()) Hit(other.GetComponent<Mobile>(), damage);
 		}
 
 
 
-		public override void Hit(uint damage)
+		public override void Hit(Mobile mobile, uint damage)
 		{
-			Debug.Log("Hit " + name);
+			mobile.Hurt(damage);
 		}
 
 		public override void Hurt(uint damage)
 		{
 			life = (uint)Mathf.Clamp(life - damage, 0, life);
+
+			if (life == 0) Die();
 		}
 		protected override void Die()
 		{
-			Debug.Log("See you");
+			//Debug.Log("BAAAAHHHHH");
+			Destroy();
 		}
 
 		protected override void Destroy()
 		{
-			throw new NotImplementedException();
+			childTrigger.OnChildTriggerEnter -= ChildTrigger_OnChildTriggerEnter;
+			childTrigger.OnChildTriggerExit -= ChildTrigger_OnChildTriggerExit;
+
+			Destroy(gameObject);
 		}
 	}
 }
