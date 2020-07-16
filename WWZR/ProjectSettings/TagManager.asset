@@ -4,7 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Bot
+  - Weapons/Bullet
+  - Weapons/Melee
   layers:
   - Default
   - TransparentFX

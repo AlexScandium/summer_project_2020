@@ -19,19 +19,32 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 		/// This is the detection area
 		/// </summary>
 		[SerializeField] protected ChildTrigger3D childTrigger = null;
+		[SerializeField] protected ChildTrigger3D body = null;
 
 		[SerializeField] protected uint life = 5;
 		[SerializeField] protected uint damage = 1;
+		[SerializeField] protected float timeBetweenDirectionChange = 3f;
+		/// <summary>
+		/// This property represents the variance of the time direction changes.
+		/// If you assign 1 to this property it'll influence timeBetweenDirectionChange property
+		/// by -0,5 or +0,5.
+		/// </summary>
+		[SerializeField, Range(0f, 2f)] protected float varianceDirectionChange = 1f;
 
 		protected Transform target = null;
 		protected Vector3 randomPoint = Vector3.zero;
+		protected float elapsedTimeBetweenDirectionChange = 0f;
+		protected float actualTimeBetweenDirectionChange = 0;
 
-		private void Start()
+		protected override void Start()
 		{
-			Init();
+			base.Start();
 
 			childTrigger.OnChildTriggerEnter += ChildTrigger_OnChildTriggerEnter;
 			childTrigger.OnChildTriggerExit += ChildTrigger_OnChildTriggerExit;
+
+			//body.OnChildTriggerEnter += Body_OnChildTriggerEnter;
+			//body.OnChildTriggerExit += Body_OnChildTriggerExit;
 		}
 
 		virtual protected void ChildTrigger_OnChildTriggerEnter(Collider other)
@@ -41,6 +54,7 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 				if (target && (transform.position - target.transform.position).magnitude < (transform.position - other.transform.position).magnitude) return;
 
 				target = other.transform;
+
 				SetModeChase();
 			}
 		}
@@ -53,6 +67,30 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 			SetModeMove();
 		}
 
+		virtual protected void Body_OnChildTriggerEnter(Collider other)
+		{
+			//if (other.CompareTag("Player"))
+			//{
+			//	if (target && (transform.position - target.transform.position).magnitude < (transform.position - other.transform.position).magnitude) return;
+
+			//	target = other.transform;
+
+			//	Debug.Log(target);
+
+			//	SetModeChase();
+			//}
+		}
+
+		virtual protected void Body_OnChildTriggerExit(Collider other)
+		{
+			//if (other.transform == target)
+			//	target = null;
+
+			//SetModeMove();
+		}
+
+		#region DoActions
+
 		private void SetModeChase()
 		{
 			DoAction = DoActionChase;
@@ -60,15 +98,21 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 
 		private void DoActionChase()
 		{
-			Vector3 targetOnPlanePos = target.position;
-			targetOnPlanePos.y = transform.position.y;
-			transform.position = Vector3.MoveTowards(transform.position, targetOnPlanePos, speed * Time.deltaTime);
-			Rotate(transform.position - target.position);
+			if (target == null)
+			{
+				SetModeMove();
+				return;
+			}
+
+			transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, speed * Time.deltaTime);
+			Rotate(target.position - transform.position);
 		}
 
 		protected override void SetModeMove()
 		{
 			base.SetModeMove();
+
+			actualTimeBetweenDirectionChange = timeBetweenDirectionChange + UnityEngine.Random.Range(-varianceDirectionChange / 2, varianceDirectionChange / 2);
 
 			randomPoint = UnityEngine.Random.insideUnitSphere * limitRadius;
 			randomPoint.y = 0;
@@ -76,12 +120,21 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 
 		protected override void DoActionMove()
 		{
-			transform.position = Vector3.MoveTowards(transform.position, randomPoint, speed * Time.deltaTime);
+			transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, speed * Time.deltaTime);
 
-			Rotate(transform.position - randomPoint);
+			Rotate(randomPoint - transform.position);
 
-			if (transform.position == randomPoint) SetModeMove(); 
+
+			if (elapsedTimeBetweenDirectionChange >= actualTimeBetweenDirectionChange)
+			{
+				SetModeMove();
+				elapsedTimeBetweenDirectionChange = 0;
+				return;
+			}
+
+			elapsedTimeBetweenDirectionChange += Time.deltaTime;
 		}
+		#endregion
 
 		protected void Rotate(Vector3 forward)
 		{
@@ -93,26 +146,38 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 			SetModeMove();
 		}
 
-		private void OnTriggerEnter(Collider other)
+
+
+
+		public override void Hit(Mobile mobile, uint damage)
 		{
-			Hit();
+			mobile.Hurt(damage);
 		}
 
-
-
-		protected override void Hit()
+		public override void Hurt(uint damage)
 		{
-			Debug.Log("Hit " + name);
-		}
+			life = (uint)Mathf.Clamp(life - damage, 0, life);
 
+			if (life == 0) Die();
+		}
 		protected override void Die()
 		{
-			Debug.Log("See you");
+			//Debug.Log("BAAAAHHHHH");
+			Destroy();
+		}
+
+		private void OnCollisionEnter(Collision collision)
+		{
+			Debug.Log("Collision with " + collision.collider.tag);
+			if(collision.collider.GetComponent<Mobile>()) Hit(collision.collider.GetComponent<Mobile>(), damage);
 		}
 
 		protected override void Destroy()
 		{
-			throw new NotImplementedException();
+			childTrigger.OnChildTriggerEnter -= ChildTrigger_OnChildTriggerEnter;
+			childTrigger.OnChildTriggerExit -= ChildTrigger_OnChildTriggerExit;
+
+			Destroy(gameObject);
 		}
 	}
 }

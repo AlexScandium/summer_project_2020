@@ -14,14 +14,30 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
 		[Header("Move properties")]
 		[SerializeField] protected float speed = 5f;
 		[SerializeField] protected float speedRotation = 180f;
-
+		[SerializeField] protected float lifePoint = 3f;
+		
+		protected float LifePoint
+        {
+            get {
+				return lifePoint; 
+			}
+            set {
+				lifePoint = value;
+				Debug.Log(String.Concat(this, " has got ", lifePoint, " left."),this);
+				if (lifePoint <= 0)
+                {
+					Die();
+                }
+			}
+        }
 		protected Action DoAction;
+		protected Action DoHitAction;
 
-        #endregion
+		#endregion
 
-        #region Methods
+		#region Methods
 
-        protected abstract void Init();
+		protected abstract void Init();
 
 		protected void SetModeWait() {
 			DoAction = DoActionWait;
@@ -45,7 +61,8 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
 			transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(direction), rotationSpeed * Time.deltaTime);
 		}
 
-		protected abstract void Hit();
+		public abstract void Hit(Mobile mobile, uint damage);
+		public abstract void Hurt(uint damage);
 
 		protected abstract void Die();
 
@@ -55,7 +72,12 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
 
         #region Unity Methods
 
-        protected void Update()
+		protected virtual void Start()
+        {
+			Init();
+        }
+
+        protected virtual void Update()
 		{
 			DoAction();
 		}
