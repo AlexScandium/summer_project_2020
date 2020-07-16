@@ -191,6 +191,8 @@ MonoBehaviour:
   body: {fileID: 0}
   life: 5
   damage: 1
+  timeBetweenDirectionChange: 0.5
+  varianceDirectionChange: 0.25
 --- !u!136 &5511886124676448876
 CapsuleCollider:
   m_ObjectHideFlags: 0

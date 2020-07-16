@@ -55,8 +55,6 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 
 				target = other.transform;
 
-				Debug.Log(target);
-
 				SetModeChase();
 			}
 		}
@@ -91,6 +89,8 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 			//SetModeMove();
 		}
 
+		#region DoActions
+
 		private void SetModeChase()
 		{
 			DoAction = DoActionChase;
@@ -103,12 +103,9 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 				SetModeMove();
 				return;
 			}
-				//Debug.Log("if condition");
-
-			//Debug.Log("Inside DoActionChase " + target);
 
 			transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, speed * Time.deltaTime);
-			Rotate(transform.position - target.position);
+			Rotate(target.position - transform.position);
 		}
 
 		protected override void SetModeMove()
@@ -125,7 +122,7 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 		{
 			transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, speed * Time.deltaTime);
 
-			Rotate(transform.position - randomPoint);
+			Rotate(randomPoint - transform.position);
 
 
 			if (elapsedTimeBetweenDirectionChange >= actualTimeBetweenDirectionChange)
@@ -137,6 +134,7 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 
 			elapsedTimeBetweenDirectionChange += Time.deltaTime;
 		}
+		#endregion
 
 		protected void Rotate(Vector3 forward)
 		{
@@ -167,9 +165,11 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 			//Debug.Log("BAAAAHHHHH");
 			Destroy();
 		}
-		virtual protected void OnColliderEnter(Collider other)
+
+		private void OnCollisionEnter(Collision collision)
 		{
-			if(other.GetComponent<Mobile>()) Hit(other.GetComponent<Mobile>(), damage);
+			Debug.Log("Collision with " + collision.collider.tag);
+			if(collision.collider.GetComponent<Mobile>()) Hit(collision.collider.GetComponent<Mobile>(), damage);
 		}
 
 		protected override void Destroy()

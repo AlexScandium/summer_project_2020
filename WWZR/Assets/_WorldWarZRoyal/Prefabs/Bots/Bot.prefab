@@ -54,6 +54,8 @@ MonoBehaviour:
   body: {fileID: 0}
   life: 5
   damage: 1
+  timeBetweenDirectionChange: 1
+  varianceDirectionChange: 0.5
 --- !u!54 &2094135633411521644
 Rigidbody:
   m_ObjectHideFlags: 0
