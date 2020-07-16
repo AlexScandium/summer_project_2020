@@ -19,19 +19,32 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 		/// This is the detection area
 		/// </summary>
 		[SerializeField] protected ChildTrigger3D childTrigger = null;
+		[SerializeField] protected ChildTrigger3D body = null;
 
 		[SerializeField] protected uint life = 5;
 		[SerializeField] protected uint damage = 1;
+		[SerializeField] protected float timeBetweenDirectionChange = 3f;
+		/// <summary>
+		/// This property represents the variance of the time direction changes.
+		/// If you assign 1 to this property it'll influence timeBetweenDirectionChange property
+		/// by -0,5 or +0,5.
+		/// </summary>
+		[SerializeField, Range(0f, 2f)] protected float varianceDirectionChange = 1f;
 
 		protected Transform target = null;
 		protected Vector3 randomPoint = Vector3.zero;
+		protected float elapsedTimeBetweenDirectionChange = 0f;
+		protected float actualTimeBetweenDirectionChange = 0;
 
-		private void Start()
+		protected override void Start()
 		{
-			Init();
+			base.Start();
 
 			childTrigger.OnChildTriggerEnter += ChildTrigger_OnChildTriggerEnter;
 			childTrigger.OnChildTriggerExit += ChildTrigger_OnChildTriggerExit;
+
+			//body.OnChildTriggerEnter += Body_OnChildTriggerEnter;
+			//body.OnChildTriggerExit += Body_OnChildTriggerExit;
 		}
 
 		virtual protected void ChildTrigger_OnChildTriggerEnter(Collider other)
@@ -56,6 +69,28 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 			SetModeMove();
 		}
 
+		virtual protected void Body_OnChildTriggerEnter(Collider other)
+		{
+			//if (other.CompareTag("Player"))
+			//{
+			//	if (target && (transform.position - target.transform.position).magnitude < (transform.position - other.transform.position).magnitude) return;
+
+			//	target = other.transform;
+
+			//	Debug.Log(target);
+
+			//	SetModeChase();
+			//}
+		}
+
+		virtual protected void Body_OnChildTriggerExit(Collider other)
+		{
+			//if (other.transform == target)
+			//	target = null;
+
+			//SetModeMove();
+		}
+
 		private void SetModeChase()
 		{
 			DoAction = DoActionChase;
@@ -72,9 +107,7 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 
 			//Debug.Log("Inside DoActionChase " + target);
 
-			Vector3 targetOnPlanePos = target.position;
-			targetOnPlanePos.y = transform.position.y;
-			transform.position = Vector3.MoveTowards(transform.position, targetOnPlanePos, speed * Time.deltaTime);
+			transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, speed * Time.deltaTime);
 			Rotate(transform.position - target.position);
 		}
 
@@ -82,17 +115,27 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 		{
 			base.SetModeMove();
 
+			actualTimeBetweenDirectionChange = timeBetweenDirectionChange + UnityEngine.Random.Range(-varianceDirectionChange / 2, varianceDirectionChange / 2);
+
 			randomPoint = UnityEngine.Random.insideUnitSphere * limitRadius;
 			randomPoint.y = 0;
 		}
 
 		protected override void DoActionMove()
 		{
-			transform.position = Vector3.MoveTowards(transform.position, randomPoint, speed * Time.deltaTime);
+			transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.forward, speed * Time.deltaTime);
 
 			Rotate(transform.position - randomPoint);
 
-			if (transform.position == randomPoint) SetModeMove(); 
+
+			if (elapsedTimeBetweenDirectionChange >= actualTimeBetweenDirectionChange)
+			{
+				SetModeMove();
+				elapsedTimeBetweenDirectionChange = 0;
+				return;
+			}
+
+			elapsedTimeBetweenDirectionChange += Time.deltaTime;
 		}
 
 		protected void Rotate(Vector3 forward)
@@ -105,10 +148,6 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 			SetModeMove();
 		}
 
-		virtual protected void OnTriggerEnter(Collider other)
-		{
-			if(other.GetComponent<Mobile>()) Hit(other.GetComponent<Mobile>(), damage);
-		}
 
 
 
@@ -127,6 +166,10 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 		{
 			//Debug.Log("BAAAAHHHHH");
 			Destroy();
+		}
+		virtual protected void OnColliderEnter(Collider other)
+		{
+			if(other.GetComponent<Mobile>()) Hit(other.GetComponent<Mobile>(), damage);
 		}
 
 		protected override void Destroy()
