@@ -107,7 +107,6 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 
 		virtual protected void OnTriggerEnter(Collider other)
 		{
-
 			if(other.GetComponent<Mobile>()) Hit(other.GetComponent<Mobile>(), damage);
 		}
 

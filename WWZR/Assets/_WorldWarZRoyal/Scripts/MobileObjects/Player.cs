@@ -303,7 +303,7 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
             }
         }
 
-        private void AddWeapon(string weaponName)
+        public void AddWeapon(string weaponName)
         {
             Weapon wp = weaponList.Find(x => x.Name == weaponName);
 
