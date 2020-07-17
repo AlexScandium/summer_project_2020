@@ -186,19 +186,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 6169872104623247593}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec9e6362026297048aacdb1ffe4d0c94, type: 3}
+  m_Script: {fileID: 11500000, guid: 95c5721c86dde2a4a9170fa576487ed9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
-  speedRotation: 340
-  speedRotationFactor: 12
+  speed: 5
+  speedRotation: 180
+  lifePoint: 3
+  animator: {fileID: 5531933415425939528}
+  speedRotationFactor: 5
   AngleForAcceleratedRotation: 90
   endAccelerationPercentage: 0.1
   weaponContainer: {fileID: 6359201447411013752}
   weaponList:
-  - {fileID: 11400000, guid: d7dcce01f634c9749be063a1669bc69f, type: 2}
   - {fileID: 11400000, guid: 0bb3a2d31d60b0543a6c15937e6db41b, type: 2}
-  animator: {fileID: 5531933415425939528}
+  - {fileID: 11400000, guid: d7dcce01f634c9749be063a1669bc69f, type: 2}
 --- !u!54 &6169872104623247594
 Rigidbody:
   m_ObjectHideFlags: 0

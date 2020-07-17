@@ -168,7 +168,7 @@ MonoBehaviour:
     type: 3}
   playersPrefab: {fileID: 1347073000530661781, guid: 659bdc4b5d1a9134b82ad146784b9716,
     type: 3}
-  numberOfPlayers: 10
+  numberOfPlayers: 5
   timeBetweenZombiesSpawn: 5
   areaRadius: 50
 --- !u!1 &610692024

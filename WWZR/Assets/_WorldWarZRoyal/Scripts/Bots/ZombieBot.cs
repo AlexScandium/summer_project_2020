@@ -4,13 +4,15 @@
 ///-----------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using Com.AndyBastel.ExperimentLab.Common;
 using Com.IsartDigital.Common;
 using Com.WWZR.WorldWarZRoyal.MobileObjects;
+using Com.WWZR.WorldWarZRoyal.WeaponActions;
 using UnityEngine;
 
-namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
-	public class Bot : Mobile {
+namespace Com.WWZR.WorldWarZRoyal.Bots {
+	public class ZombieBot : Mobile {
 		public const string TAG = "Bot";
 
 		public static float limitRadius;
@@ -19,7 +21,7 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 		/// This is the detection area
 		/// </summary>
 		[SerializeField] protected ChildTrigger3D childTrigger = null;
-		[SerializeField] protected ChildTrigger3D body = null;
+		[SerializeField] protected Animator animator = null;
 
 		[SerializeField] protected uint life = 5;
 		[SerializeField] protected uint damage = 1;
@@ -42,9 +44,10 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 
 			childTrigger.OnChildTriggerEnter += ChildTrigger_OnChildTriggerEnter;
 			childTrigger.OnChildTriggerExit += ChildTrigger_OnChildTriggerExit;
-
-			//body.OnChildTriggerEnter += Body_OnChildTriggerEnter;
-			//body.OnChildTriggerExit += Body_OnChildTriggerExit;
+		}
+		protected override void Init()
+		{
+			SetModeMove();
 		}
 
 		virtual protected void ChildTrigger_OnChildTriggerEnter(Collider other)
@@ -67,36 +70,14 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 			SetModeMove();
 		}
 
-		virtual protected void Body_OnChildTriggerEnter(Collider other)
-		{
-			//if (other.CompareTag("Player"))
-			//{
-			//	if (target && (transform.position - target.transform.position).magnitude < (transform.position - other.transform.position).magnitude) return;
-
-			//	target = other.transform;
-
-			//	Debug.Log(target);
-
-			//	SetModeChase();
-			//}
-		}
-
-		virtual protected void Body_OnChildTriggerExit(Collider other)
-		{
-			//if (other.transform == target)
-			//	target = null;
-
-			//SetModeMove();
-		}
-
 		#region DoActions
 
-		private void SetModeChase()
+		protected void SetModeChase()
 		{
 			DoAction = DoActionChase;
 		}
 
-		private void DoActionChase()
+		protected void DoActionChase()
 		{
 			if (target == null)
 			{
@@ -140,14 +121,6 @@ namespace Com.DefaultCompany.ExperimentLab.ExperimentLab.IA {
 		{
 			transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(forward), speedRotation * Time.deltaTime);
 		}
-
-		protected override void Init()
-		{
-			SetModeMove();
-		}
-
-
-
 
 		public override void Hit(Mobile mobile, uint damage)
 		{

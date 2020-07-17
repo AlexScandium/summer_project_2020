@@ -1,4 +1,5 @@
-using Com.DefaultCompany.ExperimentLab.ExperimentLab.IA;
+
+using Com.WWZR.WorldWarZRoyal.Bots;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ public class BotManager : MonoBehaviour
 	// Start is called before the first frame update
 	void Start()
 	{
-		Bot.limitRadius = areaRadius;
+		ZombieBot.limitRadius = areaRadius;
 		SpawnPlayers();
 	}
 
