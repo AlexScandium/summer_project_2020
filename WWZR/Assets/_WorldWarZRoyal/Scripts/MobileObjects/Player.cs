@@ -169,13 +169,23 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
         #endregion
 
         #region Fighting methods
-        protected override void Hit()
+        public void Hit()
         {
             if (Input.GetKeyDown(KeyCode.Space))
                 DoHitAction();
         }
 
-        private void GetCurrentWeaponStart()
+		public override void Hit(Mobile mobile, uint damage)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void Hurt(uint damage)
+		{
+			throw new NotImplementedException();
+		}
+
+		private void GetCurrentWeaponStart()
         {
             if (weaponContainer.childCount > 0 && currentEquippedWeapon.weaponObject == null)
             {
@@ -293,7 +303,7 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects
             }
         }
 
-        private void AddWeapon(string weaponName)
+        public void AddWeapon(string weaponName)
         {
             Weapon wp = weaponList.Find(x => x.Name == weaponName);
 

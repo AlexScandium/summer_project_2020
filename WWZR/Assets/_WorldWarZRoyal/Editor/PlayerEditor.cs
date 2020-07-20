@@ -35,16 +35,16 @@ namespace Com.WWZR.WorldWarZRoyal
             }
             if (GUILayout.Button("Equip Revolver"))
             {
-                currentPlayer.AddRevolver();
-            }
+				currentPlayer.AddRevolver();
+			}
             if (GUILayout.Button("Reload Revolver"))
             {
-                currentPlayer.AddMaxAmmosToEquippedWeapon();
-            }
+				currentPlayer.AddMaxAmmosToEquippedWeapon();
+			}
             if (GUILayout.Button("Remove weapon"))
             {
-                currentPlayer.RemoveWeapon();
-            }
+				currentPlayer.RemoveWeapon();
+			}
             #endregion
 
             GUILayout.Space(15);

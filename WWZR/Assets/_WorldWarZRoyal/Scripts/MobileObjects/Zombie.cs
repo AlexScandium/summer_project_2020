@@ -47,12 +47,22 @@ namespace Com.WWZR.WorldWarZRoyal.MobileObjects {
             isInvulnerable = false;
         }
 
-        protected override void Hit()
+        protected void Hit()
         {
             throw new System.NotImplementedException();
         }
 
-        protected override void DoActionMove()
+		public override void Hurt(uint damage)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public override void Hit(Mobile mobile, uint damage)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		protected override void DoActionMove()
         {
             throw new System.NotImplementedException();
         }
