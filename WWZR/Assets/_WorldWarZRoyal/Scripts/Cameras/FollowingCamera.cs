@@ -12,6 +12,8 @@ namespace Com.WWZR.WorldWarZRoyal.Cameras {
 
         [SerializeField] private GameObject target = null;
         [SerializeField] private float speed = 1f;
+        [SerializeField] private float nearSpeed = 4f;
+        private float startSpeed;
         private Vector3 previousTargetPos;
         [SerializeField] private Vector3 cameraOffset = new Vector3();
         #endregion
@@ -19,8 +21,19 @@ namespace Com.WWZR.WorldWarZRoyal.Cameras {
         #region Methods
         private void Init()
         {
+            startSpeed = speed;
             SetStartCameraPosition();
             previousTargetPos = target.transform.position;
+        }
+
+        public void SetNearSpeed()
+        {
+            speed = nearSpeed;
+        }
+
+        public void ResetSpeed()
+        {
+            speed = startSpeed;
         }
 
         private void SetStartCameraPosition()
