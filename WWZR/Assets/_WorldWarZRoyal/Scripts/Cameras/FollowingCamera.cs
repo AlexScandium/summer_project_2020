@@ -3,6 +3,7 @@
 /// Date : 07/07/2020 18:46
 ///-----------------------------------------------------------------
 
+using DG.Tweening;
 using UnityEngine;
 
 namespace Com.WWZR.WorldWarZRoyal.Cameras {
@@ -28,12 +29,12 @@ namespace Com.WWZR.WorldWarZRoyal.Cameras {
 
         public void SetNearSpeed()
         {
-            speed = nearSpeed;
+            DOTween.To(()=> speed, x=> speed = x, nearSpeed, 5);
         }
 
         public void ResetSpeed()
         {
-            speed = startSpeed;
+            DOTween.To(() => speed, x => speed = x, startSpeed, 5);
         }
 
         private void SetStartCameraPosition()
