@@ -3,6 +3,7 @@
 /// Date : 21/07/2020 20:50
 ///-----------------------------------------------------------------
 
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,9 +12,13 @@ using UnityEngine;
 namespace Com.WWZR.WorldWarZRoyal.Cameras {
     public class CameraZoomTrigger : MonoBehaviour
     {
+        [SerializeField] private float orthograpicZoomValue = 5f;
+        [SerializeField] private float zoomingDurationIn = 1f;
+        [SerializeField] private float zoomingDurationOut = 2f;
+
         private Camera mainCamera;
         private FollowingCamera cameraFollow;
-        private List<IEnumerator> currentCoroutines = new List<IEnumerator>();
+
         private float startOrthographicSize;
 
         private void OnEnable()
@@ -27,7 +32,7 @@ namespace Com.WWZR.WorldWarZRoyal.Cameras {
         {
             if (other.CompareTag("Player"))
             {
-                mainCamera.orthographicSize = 5;
+                mainCamera.DOOrthoSize(orthograpicZoomValue, zoomingDurationIn).SetEase(Ease.InOutCubic);
                 cameraFollow.SetNearSpeed();
             }
 
@@ -37,7 +42,7 @@ namespace Com.WWZR.WorldWarZRoyal.Cameras {
         {
             if (other.CompareTag("Player"))
             {
-                mainCamera.orthographicSize = startOrthographicSize;
+                mainCamera.DOOrthoSize(startOrthographicSize, zoomingDurationOut).SetEase(Ease.OutSine);
                 cameraFollow.ResetSpeed();
             }
         }
