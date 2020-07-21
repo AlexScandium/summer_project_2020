@@ -3,6 +3,7 @@
 /// Date : 07/07/2020 18:46
 ///-----------------------------------------------------------------
 
+using DG.Tweening;
 using UnityEngine;
 
 namespace Com.WWZR.WorldWarZRoyal.Cameras {
@@ -12,6 +13,8 @@ namespace Com.WWZR.WorldWarZRoyal.Cameras {
 
         [SerializeField] private GameObject target = null;
         [SerializeField] private float speed = 1f;
+        [SerializeField] private float nearSpeed = 4f;
+        private float startSpeed;
         private Vector3 previousTargetPos;
         [SerializeField] private Vector3 cameraOffset = new Vector3();
         #endregion
@@ -19,8 +22,19 @@ namespace Com.WWZR.WorldWarZRoyal.Cameras {
         #region Methods
         private void Init()
         {
+            startSpeed = speed;
             SetStartCameraPosition();
             previousTargetPos = target.transform.position;
+        }
+
+        public void SetNearSpeed()
+        {
+            DOTween.To(()=> speed, x=> speed = x, nearSpeed, 5);
+        }
+
+        public void ResetSpeed()
+        {
+            DOTween.To(() => speed, x => speed = x, startSpeed, 5);
         }
 
         private void SetStartCameraPosition()
